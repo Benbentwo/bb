@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.ablevets.com/benjamin-smith/ablevets/cmd"
+	"./cmd"
+	. "github.ablevets.com/benjamin-smith/ablevets/cmd"
 )
 
 func main() {
