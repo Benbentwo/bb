@@ -15,12 +15,12 @@
 #
 
 SHELL := /bin/bash
-NAME := jx
+NAME := av
 GO := GO111MODULE=on go
 GO_NOMOD :=GO111MODULE=off go
 REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
 #ROOT_PACKAGE := $(shell $(GO) list .)
-ROOT_PACKAGE := github.com/jenkins-x/jx
+ROOT_PACKAGE := github.ablevets.com/benjamin-smith/av
 GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
 PKGS := $(shell go list ./... | grep -v generated)
 GO_DEPENDENCIES := cmd/*/*.go cmd/*/*/*.go pkg/*/*.go pkg/*/*/*.go pkg/*//*/*/*.go
@@ -67,7 +67,7 @@ print-version: version
 	@echo $(VERSION)
 
 build: $(GO_DEPENDENCIES) version
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(BUILDFLAGS) -o build/$(NAME) cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) build $(BUILDFLAGS) -o build/$(NAME) cmd/av/av.go
 
 get-test-deps:
 	$(GO_NOMOD) get github.com/axw/gocov/gocov
@@ -120,56 +120,56 @@ test-soak:
 	@CGO_ENABLED=$(CGO_ENABLED) $(GO) test -p 2 -count=1 -tags soak -coverprofile=cover.out ./...
 
 docker-test:
-	docker run --rm -v $(shell pwd):/go/src/github.com/jenkins-x/jx golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.com/jenkins-x/jx && make test"
+	docker run --rm -v $(shell pwd):/go/src/github.ablevets.com/benjamin-smith/av golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.ablevets.com/benjamin-smith/av && make test"
 
 docker-test-slow:
-	docker run --rm -v $(shell pwd):/go/src/github.com/jenkins-x/jx golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.com/jenkins-x/jx && make test-slow"
+	docker run --rm -v $(shell pwd):/go/src/github.ablevets.com/benjamin-smith/av golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.ablevets.com/benjamin-smith/av && make test-slow"
 
 # EASY WAY TO TEST IF YOUR TEST SHOULD BE A UNIT OR INTEGRATION TEST
 docker-test-integration:
-	docker run --rm -v $(shell pwd):/go/src/github.com/jenkins-x/jx golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.com/jenkins-x/jx && make test-integration"
+	docker run --rm -v $(shell pwd):/go/src/github.ablevets.com/benjamin-smith/av golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.ablevets.com/benjamin-smith/av && make test-integration"
 
 # EASY WAY TO TEST IF YOUR SLOW TEST SHOULD BE A UNIT OR INTEGRATION TEST
 docker-test-slow-integration:
-	docker run --rm -v $(shell pwd):/go/src/github.com/jenkins-x/jx golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.com/jenkins-x/jx && make test-slow-integration"
+	docker run --rm -v $(shell pwd):/go/src/github.ablevets.com/benjamin-smith/av golang:1.11 sh -c "rm /usr/bin/git && cd /go/src/github.ablevets.com/benjamin-smith/av && make test-slow-integration"
 
-#	CGO_ENABLED=$(CGO_ENABLED) $(GO) test github.com/jenkins-x/jx/cmds
+#	CGO_ENABLED=$(CGO_ENABLED) $(GO) test github.ablevets.com/benjamin-smith/av/cmds
 test1:
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) test ./... -test.v -run $(TEST)
 
 testbin:
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -c github.com/jenkins-x/jx/pkg/jx/cmd -o build/jx-test
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -c github.ablevets.com/benjamin-smith/av/pkg/av/cmd -o build/av-test
 
 testbin-gits:
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -c github.com/jenkins-x/jx/pkg/gits -o build/jx-test-gits
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -c github.ablevets.com/benjamin-smith/av/pkg/gits -o build/av-test-gits
 
 debugtest1: testbin
-	cd pkg/jx/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/jx-test -- -test.run $(TEST)
+	cd pkg/av/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/av-test -- -test.run $(TEST)
 
 debugtest1gits: testbin-gits
-	cd pkg/gits && dlv --log --listen=:2345 --headless=true --api-version=2 exec ../../build/jx-test-gits -- -test.run $(TEST)
+	cd pkg/gits && dlv --log --listen=:2345 --headless=true --api-version=2 exec ../../build/av-test-gits -- -test.run $(TEST)
 
 inttestbin:
-	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -tags=integration -c github.com/jenkins-x/jx/pkg/jx/cmd -o build/jx-inttest
+	CGO_ENABLED=$(CGO_ENABLED) $(GO) test -tags=integration -c github.ablevets.com/benjamin-smith/av/pkg/av/cmd -o build/av-inttest
 
 debuginttest1: inttestbin
-	cd pkg/jx/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/jx-inttest -- -test.run $(TEST)
+	cd pkg/av/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/av-inttest -- -test.run $(TEST)
 
 install: $(GO_DEPENDENCIES) version
-	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) cmd/jx/jx.go
+	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) cmd/av/av.go
 
 fmt:
 	@FORMATTED=`$(GO) fmt ./...`
 	@([[ ! -z "$(FORMATTED)" ]] && printf "Fixed unformatted files:\n$(FORMATTED)") || true
 
 arm: version
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=arm $(GO) build $(BUILDFLAGS) -o build/$(NAME)-arm cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=arm $(GO) build $(BUILDFLAGS) -o build/$(NAME)-arm cmd/av/av.go
 
 win: version
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=windows GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME).exe cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=windows GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME).exe cmd/av/av.go
 
 darwin: version
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=darwin GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/darwin/jx cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=darwin GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/darwin/av cmd/av/av.go
 
 # sleeps for about 30 mins
 sleep:
@@ -178,11 +178,11 @@ sleep:
 release: check
 	rm -rf build release && mkdir build release
 	for os in linux darwin ; do \
-		CGO_ENABLED=$(CGO_ENABLED) GOOS=$$os GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$$os/$(NAME) cmd/jx/jx.go ; \
+		CGO_ENABLED=$(CGO_ENABLED) GOOS=$$os GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$$os/$(NAME) cmd/av/av.go ; \
 	done
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=windows GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME)-windows-amd64.exe cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=windows GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/$(NAME)-windows-amd64.exe cmd/av/av.go
 	zip --junk-paths release/$(NAME)-windows-amd64.zip build/$(NAME)-windows-amd64.exe README.md LICENSE
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=arm $(GO) build $(BUILDFLAGS) -o build/arm/$(NAME) cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=arm $(GO) build $(BUILDFLAGS) -o build/arm/$(NAME) cmd/av/av.go
 
 	docker build --ulimit nofile=90000:90000 -t docker.io/jenkinsxio/$(NAME):$(VERSION) .
 	docker push docker.io/jenkinsxio/$(NAME):$(VERSION)
@@ -191,33 +191,33 @@ release: check
 	chmod +x build/linux/$(NAME)
 	chmod +x build/arm/$(NAME)
 
-	cd ./build/darwin; tar -zcvf ../../release/jx-darwin-amd64.tar.gz jx
-	cd ./build/linux; tar -zcvf ../../release/jx-linux-amd64.tar.gz jx
-	cd ./build/arm; tar -zcvf ../../release/jx-linux-arm.tar.gz jx
+	cd ./build/darwin; tar -zcvf ../../release/av-darwin-amd64.tar.gz av
+	cd ./build/linux; tar -zcvf ../../release/av-linux-amd64.tar.gz av
+	cd ./build/arm; tar -zcvf ../../release/av-linux-arm.tar.gz av
 
 	go get -u github.com/progrium/gh-release
 	gh-release checksums sha256
-	gh-release create jenkins-x/$(NAME) $(VERSION) master $(VERSION)
+	gh-release create benjamin-smith/$(NAME) $(VERSION) master $(VERSION)
 
-	./build/linux/jx step changelog  --header-file docs/dev/changelog-header.md --version $(VERSION)
+	./build/linux/av step changelog  --header-file docs/dev/changelog-header.md --version $(VERSION)
 
-	# Update other repo's dependencies on jx to use the new version - updates repos as specified at .updatebot.yml
-	updatebot push-version --kind brew jx $(VERSION)
-	updatebot push-version --kind docker JX_VERSION $(VERSION)
+	# Update other repo's dependencies on av to use the new version - updates repos as specified at .updatebot.yml
+	updatebot push-version --kind brew av $(VERSION)
+	updatebot push-version --kind docker av_VERSION $(VERSION)
 	updatebot push-regex -r "\s*release = \"(.*)\"" -v $(VERSION) config.toml
-	updatebot push-regex -r "JX_VERSION=(.*)" -v $(VERSION) install-jx.sh
-	updatebot push-regex -r "\s*jxTag:\s*(.*)" -v $(VERSION) prow/values.yaml
+	updatebot push-regex -r "av_VERSION=(.*)" -v $(VERSION) install-av.sh
+	updatebot push-regex -r "\s*avTag:\s*(.*)" -v $(VERSION) prow/values.yaml
 
-	echo "Updating the JX CLI & API reference docs"
-	./build/linux/jx create client docs --verbose
-	git clone https://github.com/jenkins-x/jx-docs.git
-	cp -r docs/apidocs/site jx-docs/static/apidocs
-	cd jx-docs/static/apidocs; git add *
-	cd jx-docs/content/commands; \
-		../../../build/linux/jx create docs; \
+	echo "Updating the av CLI & API reference docs"
+	./build/linux/av create client docs --verbose
+	git clone https://github.ablevets.com/benjamin-smith/av-docs.git
+	cp -r docs/apidocs/site av-docs/static/apidocs
+	cd av-docs/static/apidocs; git add *
+	cd av-docs/content/commands; \
+		../../../build/linux/av create docs; \
 		git config credential.helper store; \
 		git add *; \
-		git commit --allow-empty -a -m "updated jx commands & API docs from $(VERSION)"; \
+		git commit --allow-empty -a -m "updated av commands & API docs from $(VERSION)"; \
 		git push origin
 
 
@@ -225,11 +225,11 @@ clean:
 	rm -rf build release cover.out cover.html
 
 linux: version
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/linux/jx cmd/jx/jx.go
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=linux GOARCH=amd64 $(GO) build $(BUILDFLAGS) -o build/linux/av cmd/av/av.go
 
 docker: linux
-	docker build -t rawlingsj/jx:dev207 .
-	docker push rawlingsj/jx:dev207
+	docker build -t benjamin-smith/av:dev207 .
+	docker push benjamin-smith/av:dev207
 
 docker-go: linux Dockerfile.builder-go
 	docker build --no-cache -t builder-go -f Dockerfile.builder-go .
@@ -247,8 +247,8 @@ docker-pull:
 	docker images | grep -v REPOSITORY | awk '{print $$1}' | uniq -u | grep jenkinsxio | awk '{print $$1":latest"}' | xargs -L1 docker pull
 
 docker-build-and-push:
-	docker build --no-cache -t $(DOCKER_HUB_USER)/jx:dev .
-	docker push $(DOCKER_HUB_USER)/jx:dev
+	docker build --no-cache -t $(DOCKER_HUB_USER)/av:dev .
+	docker push $(DOCKER_HUB_USER)/av:dev
 	docker build --no-cache -t $(DOCKER_HUB_USER)/builder-base:dev -f Dockerfile.builder-base .
 	docker push $(DOCKER_HUB_USER)/builder-base:dev
 	docker build --no-cache -t $(DOCKER_HUB_USER)/builder-maven:dev -f Dockerfile.builder-maven .
@@ -288,22 +288,22 @@ generate: generate-mocks generate-openapi generate-client fmt
 generate-mocks:
 	@echo "Generating Mocks using pegomock"
 	$(GO_NOMOD) get -d $(PEGOMOCK_PACKAGE)...
-	cd $(GOPATH)/src/$(PEGOMOCK_PACKAGE); git checkout master; git fetch origin; git branch -f jx $(PEGOMOCK_SHA); \
-	git checkout jx; $(GO_NOMOD) install ./pegomock
+	cd $(GOPATH)/src/$(PEGOMOCK_PACKAGE); git checkout master; git fetch origin; git branch -f av $(PEGOMOCK_SHA); \
+	git checkout av; $(GO_NOMOD) install ./pegomock
 	$(GO) generate ./...
 
 generate-client:
 	@echo "Generating Kubernetes Clients for pkg/apis in pkg/client for jenkins.io:v1"
-	jx create client go --output-package=pkg/client --input-package=pkg/apis --group-with-version=jenkins.io:v1
+	av create client go --output-package=pkg/client --input-package=pkg/apis --group-with-version=jenkins.io:v1
 
 # Generated docs are not checked in
 generate-docs:
 	@echo "Generating HTML docs for Kubernetes Clients"
-	jx create client docs
+	av create client docs
 
 generate-openapi:
 	@echo "Generating OpenAPI structs for Kubernetes Clients"
-	jx create client openapi --output-package=pkg/client --input-package=pkg/apis --group-with-version=jenkins.io:v1
+	av create client openapi --output-package=pkg/client --input-package=pkg/apis --group-with-version=jenkins.io:v1
 
 richgo:
 	go get -u github.com/kyoh86/richgo
@@ -311,12 +311,12 @@ richgo:
 .PHONY: release clean arm
 
 preview:
-	docker build --no-cache -t docker.io/jenkinsxio/builder-maven:SNAPSHOT-JX-$(BRANCH_NAME)-$(BUILD_NUMBER) -f Dockerfile.builder-maven .
-	docker push docker.io/jenkinsxio/builder-maven:SNAPSHOT-JX-$(BRANCH_NAME)-$(BUILD_NUMBER)
-	docker build --no-cache -t docker.io/jenkinsxio/builder-go:SNAPSHOT-JX-$(BRANCH_NAME)-$(BUILD_NUMBER) -f Dockerfile.builder-go .
-	docker push docker.io/jenkinsxio/builder-go:SNAPSHOT-JX-$(BRANCH_NAME)-$(BUILD_NUMBER)
-	docker build --no-cache -t docker.io/jenkinsxio/builder-nodejs:SNAPSHOT-JX-$(BRANCH_NAME)-$(BUILD_NUMBER) -f Dockerfile.builder-nodejs .
-	docker push docker.io/jenkinsxio/builder-nodejs:SNAPSHOT-JX-$(BRANCH_NAME)-$(BUILD_NUMBER)
+	docker build --no-cache -t docker.io/jenkinsxio/builder-maven:SNAPSHOT-av-$(BRANCH_NAME)-$(BUILD_NUMBER) -f Dockerfile.builder-maven .
+	docker push docker.io/jenkinsxio/builder-maven:SNAPSHOT-av-$(BRANCH_NAME)-$(BUILD_NUMBER)
+	docker build --no-cache -t docker.io/jenkinsxio/builder-go:SNAPSHOT-av-$(BRANCH_NAME)-$(BUILD_NUMBER) -f Dockerfile.builder-go .
+	docker push docker.io/jenkinsxio/builder-go:SNAPSHOT-av-$(BRANCH_NAME)-$(BUILD_NUMBER)
+	docker build --no-cache -t docker.io/jenkinsxio/builder-nodejs:SNAPSHOT-av-$(BRANCH_NAME)-$(BUILD_NUMBER) -f Dockerfile.builder-nodejs .
+	docker push docker.io/jenkinsxio/builder-nodejs:SNAPSHOT-av-$(BRANCH_NAME)-$(BUILD_NUMBER)
 
 FGT := $(GOPATH)/bin/fgt
 $(FGT):
