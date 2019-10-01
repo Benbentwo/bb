@@ -1,1 +1,6 @@
-{"name":"AV","tagline":"AV binary and utility","body":"### Welcome to the AV Binary Page.\r\n This Page is generated from source","note":"Don't delete this file! It's used internally to help with page regeneration."}
+{
+  "name": "AV",
+  "tagline": "AV binary and utility",
+  "body": "### Welcome to the AV Binary Page.\r\n This Page is generated from source",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
