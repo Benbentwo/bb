@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <title>AV by Digital-Transformation</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>AV</h1>
+        <h2>AV Binary and Utility</h2>
+
+        <section id="downloads">
+          <a href="https://github.ablevets.com/Digital-Transformation/av" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h3>
+<a id="welcome-to-the-av-binary-repository-and-documentation" class="anchor" href="#welcome-to-the-av-binary-repository-and-documentation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome to The AV Binary Repository and Documentation.</h3>
+<h3>
+<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+<p>Feel free to open pull requests or contact <a class="user-mention" data-hovercard-type="user" data-hovercard-url="/hovercards?user_id=80" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.ablevets.com/benjamin-smith">@benjamin-smith</a> for support</p>
+<h1>
+<a id="cobra-example" class="anchor" href="#cobra-example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>cobra-example</h1>
+<p>An example application built with <a href="https://github.com/spf13/cobra">cobra</a></p>
+<h1>
+<a id="steps" class="anchor" href="#steps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Steps</h1>
+<ol>
+<li>
+<p>Install cobra</p>
+<p><code>go get github.com/spf13/cobra/cobra</code></p>
+</li>
+<li>
+<p>Initialize cobra-example application</p>
+<p><code>$GOPATH/bin/cobra init github.ablevets.com/benjamin-smith/av</code></p>
+</li>
+<li>
+<p>Add <code>hello</code> and <code>bye</code> sub commands to our example app</p>
+<p><code>$GOPATH/bin/cobra add hello</code></p>
+<p><code>$GOPATH/bin/cobra add bye</code></p>
+</li>
+<li>
+<p>Edit <code>cmd/hello.go</code>, <code>cmd/bye.go</code> and <code>main.go</code> to reflect the command description and logic required.</p>
+</li>
+<li>
+<p>Run <code>main.go</code>. You would see full help and subcommands</p>
+<pre><code>go run main.go
+
+This application shows how to create modern CLI
+applications in go using Cobra CLI library
+
+Usage:
+cobra-example [command]∑
+
+Available Commands:
+bye         says bye
+hello       says hello
+help        Help about any command
+
+Flags:
+    --config string   config file (default is $HOME/.cobra-example.yaml)
+-h, --help            help for cobra-example
+-t, --toggle          Help message for toggle
+</code></pre>
+</li>
+</ol>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
