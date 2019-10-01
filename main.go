@@ -15,8 +15,14 @@ limitations under the License.
 */
 package main
 
-import "github.ablevets.com/benjamin-smith/av/cmd"
+import (
+	"github.ablevets.com/Digital-Transformation/av/cmd/av/app"
+	"os"
+)
 
 func main() {
-	cmd.Execute()
+	if err := app.Run(nil); err != nil {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }
