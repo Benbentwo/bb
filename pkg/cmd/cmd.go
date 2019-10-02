@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
-	"github.com/jenkins-x/jx/pkg/jx/cmd/clients"
+	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1/terminal"
 	"io"

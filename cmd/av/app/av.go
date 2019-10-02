@@ -4,7 +4,7 @@ package app
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd"
-	"github.com/jenkins-x/jx/pkg/jx/cmd/clients"
+	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"os"
 )
 
