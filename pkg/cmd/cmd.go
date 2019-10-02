@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/opts"
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1/terminal"
@@ -20,7 +19,7 @@ func NewAVCommand(in terminal.FileReader, out terminal.FileWriter, err io.Writer
 }
 
 func setLoggingLevel(cmd *cobra.Command, args []string) {
-	verbose, err := strconv.ParseBool(cmd.Flag(opts.OptionVerbose).Value.String())
+	verbose, err := strconv.ParseBool(cmd.Flag("verbose").Value.String())
 	if err != nil {
 		log.Logger().Errorf("Unable to determine log level")
 	}
