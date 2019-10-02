@@ -20,7 +20,7 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 SHELL := /bin/bash
 NAME := av
 BUILD_TARGET = build
-MAIN_SRC_FILE=cmd/av/app/av.go
+MAIN_SRC_FILE=cmd/av/av.go
 GO := GO111MODULE=on go
 GO_NOMOD :=GO111MODULE=off go
 REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
@@ -264,3 +264,4 @@ lint: ## Lint the code
 	./hack/generate.sh
 
 all: linux arm win win32 darwin
+	chmod -$ +x ./build
