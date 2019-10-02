@@ -263,3 +263,4 @@ lint: ## Lint the code
 	./hack/linter.sh
 	./hack/generate.sh
 
+all: linux arm win win32 darwin
