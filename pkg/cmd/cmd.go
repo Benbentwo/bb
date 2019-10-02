@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/jenkins-x/jx/pkg/jx/cmd/clients"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1/terminal"
 	"io"
 	"strconv"
 )
 
-func NewAVCommand(in terminal.FileReader, out terminal.FileWriter, err io.Writer, args []string) *cobra.Command {
+func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWriter, err io.Writer, args []string) *cobra.Command {
 	cmds := &cobra.Command{
 		Use:              "av",
 		Short:            "AV CLI tool and utility",

@@ -12,7 +12,7 @@ import (
 // Run runs the command, if args are not nil they will be set on the command
 func Run(args []string) error {
 	configureTerminalForAnsiEscapes()
-	cmd := cmd.NewJXCommand(clients.NewFactory(), os.Stdin, os.Stdout, os.Stderr, nil)
+	cmd := cmd.NewAVCommand(clients.NewFactory(), os.Stdin, os.Stdout, os.Stderr, nil)
 	if len(args) > 0 {
 		args = args[1:]
 		cmd.SetArgs(args)
