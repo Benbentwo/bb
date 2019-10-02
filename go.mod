@@ -61,7 +61,7 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.4.0
 	github.com/tektoncd/pipeline v0.5.1
-	gocloud.dev v0.17.0
+	gocloud.dev v0.9.0
 	gopkg.in/AlecAivazis/survey.v1 v1.8.7
 	gopkg.in/src-d/go-git.v4 v4.13.1
 	k8s.io/api v0.0.0-20190718183219-b59d8169aab5

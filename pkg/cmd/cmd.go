@@ -3,6 +3,7 @@ package cmd
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/clients"
+	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/spf13/cobra"
 	"gopkg.in/AlecAivazis/survey.v1/terminal"
 	"io"
@@ -20,7 +21,7 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 }
 
 func setLoggingLevel(cmd *cobra.Command, args []string) {
-	verbose, err := strconv.ParseBool(cmd.Flag("verbose").Value.String())
+	verbose, err := strconv.ParseBool(cmd.Flag(opts.OptionVerbose).Value.String())
 	if err != nil {
 		log.Logger().Errorf("Unable to determine log level")
 	}
