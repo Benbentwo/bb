@@ -23,7 +23,6 @@ import (
 
 	//vaultoperatorclient "github.com/banzaicloud/bank-vaults/operator/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/golang-jenkins"
-	jenkinsv1 "github.com/jenkins-x/jx/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx/pkg/auth"
 	"github.com/jenkins-x/jx/pkg/client/clientset/versioned"
 	"github.com/jenkins-x/jx/pkg/gits"
@@ -89,11 +88,11 @@ var (
 	}
 )
 
-// ModifyDevEnvironmentFn a callback to create/update the development Environment
-type ModifyDevEnvironmentFn func(callback func(env *jenkinsv1.Environment) error) error
-
-// ModifyEnvironmentFn a callback to create/update an Environment
-type ModifyEnvironmentFn func(name string, callback func(env *jenkinsv1.Environment) error) error
+//// ModifyDevEnvironmentFn a callback to create/update the development Environment
+//type ModifyDevEnvironmentFn func(callback func(env *jenkinsv1.Environment) error) error
+//
+//// ModifyEnvironmentFn a callback to create/update an Environment
+//type ModifyEnvironmentFn func(name string, callback func(env *jenkinsv1.Environment) error) error
 
 // CommonOptions contains common options and helper methods
 type CommonOptions struct {
@@ -107,41 +106,41 @@ type CommonOptions struct {
 	ExternalJenkinsBaseURL string
 	In                     terminal.FileReader
 	InstallDependencies    bool
-	ModifyDevEnvironmentFn ModifyDevEnvironmentFn
-	ModifyEnvironmentFn    ModifyEnvironmentFn
-	NoBrew                 bool
-	RemoteCluster          bool
-	Out                    terminal.FileWriter
-	ServiceAccount         string
-	SkipAuthSecretsMerge   bool
-	Username               string
-	Verbose                bool
-	NotifyCallback         func(LogLevel, string)
+	//ModifyDevEnvironmentFn ModifyDevEnvironmentFn
+	//ModifyEnvironmentFn    ModifyEnvironmentFn
+	NoBrew               bool
+	RemoteCluster        bool
+	Out                  terminal.FileWriter
+	ServiceAccount       string
+	SkipAuthSecretsMerge bool
+	Username             string
+	Verbose              bool
+	NotifyCallback       func(LogLevel, string)
 
-	apiExtensionsClient    apiextensionsclientset.Interface
-	certManagerClient      certmngclient.Interface
-	complianceClient       *client.SonobuoyClient
-	currentNamespace       string
-	devNamespace           string
-	environmentsDir        string
-	factory                clients.Factory
-	fakeGitProvider        *gits.FakeProvider
-	git                    gits.Gitter
-	helm                   helm.Helmer
-	jenkinsClient          gojenkins.JenkinsClient
-	jxClient               versioned.Interface
-	knbClient              buildclient.Interface
-	kserveClient           kserve.Interface
-	kubeClient             kubernetes.Interface
-	kuber                  kube.Kuber
-	modifyDevEnvironmentFn ModifyDevEnvironmentFn
-	modifyEnvironmentFn    ModifyEnvironmentFn
-	NameServers            []string
-	resourcesInstaller     resources.Installer
-	systemVaultClient      vault.Client
-	tektonClient           tektonclient.Interface
-	vaultClient            vault.Client
-	secretURLClient        secreturl.Client
+	apiExtensionsClient apiextensionsclientset.Interface
+	certManagerClient   certmngclient.Interface
+	complianceClient    *client.SonobuoyClient
+	currentNamespace    string
+	devNamespace        string
+	environmentsDir     string
+	factory             clients.Factory
+	fakeGitProvider     *gits.FakeProvider
+	git                 gits.Gitter
+	helm                helm.Helmer
+	jenkinsClient       gojenkins.JenkinsClient
+	jxClient            versioned.Interface
+	knbClient           buildclient.Interface
+	kserveClient        kserve.Interface
+	kubeClient          kubernetes.Interface
+	kuber               kube.Kuber
+	//modifyDevEnvironmentFn ModifyDevEnvironmentFn
+	//modifyEnvironmentFn    ModifyEnvironmentFn
+	NameServers        []string
+	resourcesInstaller resources.Installer
+	systemVaultClient  vault.Client
+	tektonClient       tektonclient.Interface
+	vaultClient        vault.Client
+	secretURLClient    secreturl.Client
 	//vaultOperatorClient    vaultoperatorclient.Interface
 	AdvancedMode bool
 	ConfigFile   string
@@ -175,22 +174,22 @@ func (o *CommonOptions) CreateTable() table.Table {
 	return o.factory.CreateTable(o.Out)
 }
 
-// NotifyProgress by default logs info to the console but a custom callback can be added to send feedback to, say, a web UI
-func (o *CommonOptions) NotifyProgress(level LogLevel, format string, args ...interface{}) {
-	if o.NotifyCallback != nil {
-		text := fmt.Sprintf(format, args...)
-		o.NotifyCallback(level, text)
-		return
-	}
-	switch level {
-	case LogInfo:
-		log.Logger().Infof(format, args...)
-	case LogWarning:
-		log.Logger().Warnf(format, args...)
-	default:
-		log.Logger().Errorf(format, args...)
-	}
-}
+//// NotifyProgress by default logs info to the console but a custom callback can be added to send feedback to, say, a web UI
+//func (o *CommonOptions) NotifyProgress(level LogLevel, format string, args ...interface{}) {
+//	if o.NotifyCallback != nil {
+//		text := fmt.Sprintf(format, args...)
+//		o.NotifyCallback(level, text)
+//		return
+//	}
+//	switch level {
+//	case LogInfo:
+//		log.Logger().Infof(format, args...)
+//	case LogWarning:
+//		log.Logger().Warnf(format, args...)
+//	default:
+//		log.Logger().Errorf(format, args...)
+//	}
+//}
 
 // NewCommonOptionsWithTerm creates a new CommonOptions instance with given terminal input, output and error
 func NewCommonOptionsWithTerm(factory clients.Factory, in terminal.FileReader, out terminal.FileWriter, err io.Writer) *CommonOptions {
@@ -210,13 +209,13 @@ func NewCommonOptionsWithFactory(factory clients.Factory) CommonOptions {
 	}
 }
 
-// SetDevNamespace configures the current dev namespace
-func (o *CommonOptions) SetDevNamespace(ns string) {
-	o.devNamespace = ns
-	o.currentNamespace = ns
-	o.kubeClient = nil
-	log.Logger().Debugf("Setting the dev namespace to: %s", util.ColorInfo(ns))
-}
+//// SetDevNamespace configures the current dev namespace
+//func (o *CommonOptions) SetDevNamespace(ns string) {
+//	o.devNamespace = ns
+//	o.currentNamespace = ns
+//	o.kubeClient = nil
+//	log.Logger().Debugf("Setting the dev namespace to: %s", util.ColorInfo(ns))
+//}
 
 func (o *CommonOptions) SetCurrentNamespace(ns string) {
 	o.currentNamespace = ns
@@ -1189,7 +1188,7 @@ func (o *CommonOptions) SetBatchMode(batchMode bool) {
 	o.factory.SetBatch(batchMode)
 }
 
-// IstioClient creates a new Kubernetes client for Istio resources
+//// IstioClient creates a new Kubernetes client for Istio resources
 //func (o *CommonOptions) IstioClient() (istioclient.Interface, error) {
 //	config, err := o.factory.CreateKubeConfig()
 //	if err != nil {
