@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	initialize "github.ablevets.com/Digital-Transformation/av/pkg/cmd/init"
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
@@ -18,30 +19,39 @@ import (
 func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWriter, err io.Writer, args []string) *cobra.Command {
 	replacer := strings.NewReplacer("-", "_")
 	viper.SetEnvKeyReplacer(replacer)
-	cmds := &cobra.Command{
+	baseCommand := &cobra.Command{
 		Use:              "av",
 		Short:            "AV CLI tool and utility",
 		PersistentPreRun: setLoggingLevel,
 		Run:              runHelp,
 	}
-	//log.Logger().Debugf("running %s", cmds.CalledAs())
+	//log.Logger().Debugf("running %s", baseCommand.CalledAs())
 	commonOpts := opts.NewCommonOptionsWithTerm(f, in, out, err)
-	commonOpts.AddBaseFlags(cmds)
+	commonOpts.AddBaseFlags(baseCommand)
 	if len(args) == 0 {
 		args = os.Args
 	}
 	if len(args) > 1 {
 		cmdPathPieces := args[1:]
 
-		if _, _, err := cmds.Find(cmdPathPieces); err != nil {
+		if _, _, err := baseCommand.Find(cmdPathPieces); err != nil {
 			log.Logger().Errorf("%v", err)
 			os.Exit(1)
 		}
 	}
-	groups := templates.CommandGroups{}
+	groups := templates.CommandGroups{
+		{
+			Message: "Installing and initializing AV:",
+			Commands: []*cobra.Command{
+				initialize.NewCmdInit(commonOpts),
+			},
+		},
+	}
+
+	groups.Add(baseCommand)
 	getPluginCommandGroups := func() (templates.PluginCommandGroups, bool) {
 		verifier := &extensions.CommandOverrideVerifier{
-			Root:        cmds,
+			Root:        baseCommand,
 			SeenPlugins: make(map[string]string, 0),
 		}
 		pluginCommandGroups, managedPluginsEnabled, err := commonOpts.GetPluginCommandGroups(verifier)
@@ -51,8 +61,8 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 		return pluginCommandGroups, managedPluginsEnabled
 	}
 
-	templates.ActsAsRootCommand(cmds, []string{"options"}, getPluginCommandGroups, groups...)
-	return cmds
+	templates.ActsAsRootCommand(baseCommand, []string{"options"}, getPluginCommandGroups, groups...)
+	return baseCommand
 }
 
 func setLoggingLevel(cmd *cobra.Command, args []string) {

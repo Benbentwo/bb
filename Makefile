@@ -264,4 +264,4 @@ lint: ## Lint the code
 	./hack/generate.sh
 
 all: linux arm win win32 darwin
-	chmod -$ +x ./build
+	chmod -R +x ./build

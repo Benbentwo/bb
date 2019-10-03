@@ -200,7 +200,7 @@ func SetOutput(out io.Writer) {
 	logrus.SetOutput(out)
 }
 
-// copied from utils to avoid circular import
+// copied from avutils to avoid circular import
 func fileExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
