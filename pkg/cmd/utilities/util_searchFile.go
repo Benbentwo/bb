@@ -71,7 +71,8 @@ func (o *UtilSearchFileOptions) Run() error {
 		return errors.Wrapf(err,"Could not search the file %s for the string %s.", o.SearchFile, o.SearchString)
 	}
 	log.Logger().Infof("Found %d instances of `%s` in the file `%s`", len(count), o.SearchString, o.SearchFile)
-	log.Logger().Infof("Found on lines %d", count)
-
+	if len(count) > 0 {
+		log.Logger().Infof("Found on lines %d", count)
+	}
 	return nil
 }
