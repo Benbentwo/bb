@@ -4,6 +4,7 @@ import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -91,4 +92,8 @@ func AvBinaryLocation(osExecutable func() (string, error)) (string, error) {
 	path := filepath.Dir(avProcessBinary)
 	log.Logger().Debugf("dir from '%s' is '%s'", avProcessBinary, path)
 	return path, nil
+}
+
+func HomeReplace(input string) string {
+	return strings.NewReplacer("~", os.Getenv("HOME")).Replace(input)
 }

@@ -9,7 +9,7 @@ import (
 
 var logs = log.Logger()
 
-func DoesFileContainString( s string, pathToFile string) (bool, error) {
+func DoesFileContainString( s string, pathToFile string) (bool, int, error) {
 	replacer := strings.NewReplacer("~", os.Getenv("HOME"))
 	pathToFile = replacer.Replace(pathToFile)
 	logs.Debugf("Looking for text : %s", s)
@@ -18,17 +18,20 @@ func DoesFileContainString( s string, pathToFile string) (bool, error) {
 	f, err := os.Open(pathToFile)
 	if err != nil {
 		logs.Errorf("Error Opening file: %s, Error: %s", pathToFile, err)
-		return false, err
+		return false, -1, err
 	}
 	defer f.Close()
 	scanner := bufio.NewScanner(f)
+	line := 1
+
 	for scanner.Scan() {
 		if strings.Contains(scanner.Text(), s) {
-			return true, nil
+			return true,line, nil
 		}
+		line++
 	}
 	if someError := scanner.Err(); someError != nil {
-		return false, err
+		return false, -1, err
 	}
-	return false, nil
+	return false,-1, nil
 }

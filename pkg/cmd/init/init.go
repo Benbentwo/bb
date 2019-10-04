@@ -77,7 +77,7 @@ func (o *InitOptions) Run() error {
 		return err
 	}
 	if !exists {
-		logs.Debugf("Directory `~/.av not found... creating")
+		logs.Debugf("Directory `~/.av` not found... creating")
 		err = os.MkdirAll(path, avutils.DefaultWritePermissions)
 		if err != nil {
 			return err
@@ -86,16 +86,20 @@ func (o *InitOptions) Run() error {
 
 	// Add to the bash profile
 	if os.Getenv("AV_HOME") != path {
-
+		logs.Debugf("AV HOME Set to %s", os.Getenv("AV_HOME"))
+		logs.Debugf("AV HOME Set to %s", path)
 		// set current shell
 		err = os.Setenv("AV_HOME", path)
 		if err != nil {
 			return err
 		}
 
-		stringExists, err := avutils.DoesFileContainString("export AV_HOME=~/.av", "~/.bash_profile")
+		stringExists,line, err := avutils.DoesFileContainString("export AV_HOME=~/.av", "~/.bash_profile")
 		if err != nil {
 			return err
+		}
+		if line != -1 {
+			logs.Debugf("Found String at line %s", line)
 		}
 		if !stringExists {
 			f, err := os.OpenFile(replacer.Replace("~/.bash_profile"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
