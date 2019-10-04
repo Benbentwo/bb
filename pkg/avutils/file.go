@@ -31,10 +31,4 @@ func DoesFileContainString( s string, pathToFile string) (bool, error) {
 		return false, err
 	}
 	return false, nil
-
-
-	//_, _ = fmt.Scanln(&s)
-	//bytes, err := ioutil.ReadFile(pathToFile)
-	//stringToFind := string(bytes)
-	//return strings.Contains(stringToFind, s), nil
 }
