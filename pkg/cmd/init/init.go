@@ -30,6 +30,7 @@ type InitFlags struct {
 //	Dir 			string
 //
 //}
+var logs = log.Logger()
 
 var (
 	initLong = templates.LongDesc(`
@@ -64,20 +65,19 @@ func NewCmdInit(commonOpts *opts.CommonOptions) *cobra.Command {
 
 func (o *InitOptions) Run() error {
 
+
 	replacer := strings.NewReplacer("~", os.Getenv("HOME"))
-	path := replacer.Replace(o.Flags.ConfigDir)
-	path = util.StripTrailingSlash(path)
-	path = path+"/.av"
+	path := replacer.Replace("~/.av")
+
 	log.Blank()
-	log.Logger().Debugln("ConfigDir Flag set to: "+o.Flags.ConfigDir)
-	log.Logger().Debugln("path var set to: "+path)
-	log.Blank()
+
 	// if it doesn't already exist create it
 	exists, err := util.DirExists(path)
 	if err != nil {
 		return err
 	}
 	if !exists {
+		logs.Debugf("Directory `~/.av not found... creating")
 		err = os.MkdirAll(path, avutils.DefaultWritePermissions)
 		if err != nil {
 			return err
@@ -85,28 +85,37 @@ func (o *InitOptions) Run() error {
 	}
 
 	// Add to the bash profile
-	if os.Getenv("AV_ENABLED") != path {
+	if os.Getenv("AV_HOME") != path {
+
+		// set current shell
 		err = os.Setenv("AV_HOME", path)
 		if err != nil {
 			return err
 		}
-		//exists, err = util.FileExists("~/.bash_profile")
-		f, err := os.OpenFile(replacer.Replace("~/.bash_profile"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-		if err != nil {
-			panic(err)
-		}
 
-		defer f.Close()
-		var carriage = ""
-		if runtime.GOOS == "windows" {
-			carriage = "\r\n"
-		} else {
-			carriage = "\n"
+		stringExists, err := avutils.DoesFileContainString("export AV_HOME=~/.av", "~/.bash_profile")
+		if err != nil {
+			return err
 		}
-		if _, err = f.WriteString("export AV_HOME="+path+carriage); err != nil {
-			panic(err)
+		if !stringExists {
+			f, err := os.OpenFile(replacer.Replace("~/.bash_profile"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			if err != nil {
+				logs.Errorf("Couldn't open or find ~/.bash_profile")
+				panic(err)
+			}
+
+			defer f.Close()
+			var carriage= ""
+			if runtime.GOOS == "windows" {
+				carriage = "\r\n"
+			} else {
+				carriage = "\n"
+			}
+			if _, err = f.WriteString("export AV_HOME=" + path + carriage); err != nil {
+				panic(err)
+			}
+			log.Logger().Debugf("Updated Bash Profile to include AV_HOME")
 		}
-		log.Logger().Debugf("Updated Bash Profile to include AV_HOME")
 	}
 	exists, err = util.FileExists(path+"/config.yaml")
 	if err != nil {
