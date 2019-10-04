@@ -85,7 +85,7 @@ func (o *InitOptions) Run() error {
 	}
 
 	// Add to the bash profile
-	if os.Getenv("AV_HOME") != path {
+	if os.Getenv("AV_ENABLED") != path {
 		err = os.Setenv("AV_HOME", path)
 		if err != nil {
 			return err
@@ -135,7 +135,6 @@ func (o *InitOptions) Run() error {
 
 func(o *InitOptions) AddInitFlags(cmd *cobra.Command) {
 	// add flags
-	cmd.Flags().StringVarP(&o.Flags.ConfigDir, "config-dir", "c", "~", "The Directory you would like to store your AV configuration in")
 	cmd.Flags().StringVarP(&o.Flags.ProjectsDir, "project-dir", "p", "~/dev", "The Directory you would like to store your Projects in")
 
 }
