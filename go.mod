@@ -38,6 +38,7 @@ require (
 	github.com/chai2010/gettext-go v0.0.0-20170215093142-bf70f2a70fb1 // indirect
 	github.com/circonus-labs/circonus-gometrics v2.2.6+incompatible // indirect
 	github.com/fatih/color v1.7.0
+	github.com/fatih/structs v1.1.0
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/hashicorp/consul v1.4.2 // indirect
 	github.com/hashicorp/serf v0.8.2 // indirect

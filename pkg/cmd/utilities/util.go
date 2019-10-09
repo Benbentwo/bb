@@ -21,6 +21,7 @@ var (
 	get_example = templates.Examples(`
 		Runs Supporting Functions, options include:
 		* searchfile
+		* generate function
 	`)
 )
 
@@ -45,6 +46,7 @@ func NewCmdUtil(commonOpts *opts.CommonOptions) *cobra.Command {
 	}
 	options.AddUtilFlags(cmd)
 	cmd.AddCommand(NewCmdUtilitySearchFile(commonOpts))
+	cmd.AddCommand(NewCmdUtilityGenerateFunction(commonOpts))
 	return cmd
 }
 

@@ -1,0 +1,64 @@
+package {{ .folder }}
+
+import (
+	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
+    "github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/fatih/structs"
+	"github.com/jenkins-x/jx/pkg/cmd/helper"
+	"github.com/jenkins-x/jx/pkg/cmd/opts"
+	"github.com/jenkins-x/jx/pkg/util"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+)
+
+
+// GetAddonOptions the command line options
+type {{ .folder }}{{.filename}}Options struct {
+	*opts.CommonOptions
+	batch       bool
+}
+
+var (
+	{{.folder}}_{{.filename}}_long = templates.LongDesc(`
+		{{.longDescription}}
+`)
+
+	{{.folder}}_{{.filename}}_example = templates.Examples(`
+        {{.exampleString}}
+	`)
+)
+
+func NewCmd{{.folder}}{{.filename}}(commonOpts *opts.CommonOptions) *cobra.Command {
+	options := &{{.folder}}{{.filename}}Options {
+        CommonOptions: commonOpts,
+	}
+
+	cmd := &cobra.Command{
+		Use:     "{{.commandUse}}",
+		Short:   "{{.shortDescription}}",
+		Long:    {{.folder}}_{{.filename}}_long,
+		Example: {{.folder}}_{{.filename}}_example,
+		Run: func(cmd *cobra.Command, args []string) {
+			options.Cmd = cmd
+			options.Args = args
+			err := options.Run()
+			helper.CheckErr(err)
+		},
+	}
+	// this command is not intended to be run in batch mode...
+	cmd.Flags().BoolVarP(&options.batch, "batch", "b", false, "Batch commands don't prompt for user input")
+
+	return cmd
+}
+
+
+// Run implements this command
+func (o *{{.folder}}{{.filename}}Options) Run() error {
+
+    // You must still add the NewCmd{{.folder}}{{.filename}} to a base command though!
+    //   On a base command you need the line
+    // `cmd.AddCommand(NewCmd{{.folder}}{{.filename}}(commonOpts))`
+    //   then rebuild the binary!
+    log.Logger().Infof("Nice Job configuring this to run %s", path)
+
+}
