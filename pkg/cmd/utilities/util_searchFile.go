@@ -27,7 +27,7 @@ var (
 `)
 
 	util_searchfile_example = templates.Examples(`
-		# Uninstall the binary
+		# Utility to search a file for a string
 		av util search "hello world" HelloWorld.java
 	`)
 )
