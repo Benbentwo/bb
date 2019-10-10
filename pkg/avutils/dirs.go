@@ -2,6 +2,7 @@ package avutils
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -93,7 +94,24 @@ func AvBinaryLocation(osExecutable func() (string, error)) (string, error) {
 	log.Logger().Debugf("dir from '%s' is '%s'", avProcessBinary, path)
 	return path, nil
 }
+func ListSubDirectories(inputDir string) []string {
+	inputDir = HomeReplace(inputDir)
+	files, err := ioutil.ReadDir(inputDir)
+	if err != nil {
+		log.Logger().Errorf("Couldn't list files in %s", inputDir)
+	}
+	var splice = make([]string, 0)
+
+	for _, f := range files {
+		if f.IsDir() {
+			log.Logger().Debugln(f.Name())
+			splice = append(splice, f.Name())
+		}
+	}
+	return splice
+}
 
 func HomeReplace(input string) string {
 	return strings.NewReplacer("~", os.Getenv("HOME")).Replace(input)
 }
+
