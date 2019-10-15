@@ -9,51 +9,54 @@ import (
 	"github.com/jenkins-x/jx/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"os"
+	"path/filepath"
 	"regexp"
+	"strings"
 	"text/template"
 )
 
+var TemplateFUNctionMap = template.FuncMap{
+	"title":   strings.Title,
+	"toLower": strings.ToLower,
+}
+
 const FunctionGenerationTemplate = `
-package {{ .Folder | strings.ToLower }}
+package {{ .Folder | toLower  }}
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
     "github.ablevets.com/Digital-Transformation/av/pkg/log"
-	"github.com/fatih/structs"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
-	"github.com/jenkins-x/jx/pkg/cmd/opts"
-	"github.com/jenkins-x/jx/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 
 // GetAddonOptions the command line options
-type {{ .Folder | strings.Title }}{{.Filename | strings.Title}}Options struct {
-	*opts.CommonOptions
+type {{ .NoExtensionFilename | title }}Options struct {
+	*	opts.CommonOptions
 	batch       bool
 }
 
 var (
-	{{.Folder | strings.ToLower }}_{{.Filename | strings.ToLower }}_long = templates.LongDesc("
-{{.LongDescription}}
+	{{ .Folder | toLower  }}_{{ .Filename | toLower  }}_long = templates.LongDesc("
+{{ .LongDescription }}
 ")
 
-	{{.Folder | strings.ToLower}}_{{.Filename | strings.ToLower}}_example = templates.Examples("
-{{.ExampleString}}
+	{{ .Folder | toLower }}_{{ .Filename | toLower }}_example = templates.Examples("
+{{ .ExampleString }}
 ")
 )
 
-func NewCmd{{.Folder | strings.Title }}{{.Filename | strings.Title}}(commonOpts *opts.CommonOptions) *cobra.Command {
-	options := &{{.Folder | strings.Title}}{{.Filename | strings.Title }}Options {
+func NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
+	options := &{{ .Folder | title }}{{ .Filename | title  }}Options {
         CommonOptions: commonOpts,
 	}
 
 	cmd := &cobra.Command{
-		Use:     "{{.CommandUse | strings.toLower}}",
-		Short:   "{{.ShortDescription}}",
-		Long:    {{.Folder | strings.toLower}}_{{.Filename | strings.toLower}}_long,
-		Example: {{.Folder | strings.toLower}}_{{.Filename | strings.toLower}}_example,
+		Use:     "{{ .CommandUse | toLower }}",
+		Short:   "{{ .ShortDescription }}",
+		Long:    {{ .Folder | toLower }}_{{ .Filename | toLower }}_long,
+		Example: {{ .Folder | toLower }}_{{ .Filename | toLower }}_example,
 		Run: func(cmd *cobra.Command, args []string) {
 			options.Cmd = cmd
 			options.Args = args
@@ -69,11 +72,11 @@ func NewCmd{{.Folder | strings.Title }}{{.Filename | strings.Title}}(commonOpts 
 
 
 // Run implements this command
-func (o *{{ .Folder | strings.Title }}{{.Filename | strings.Title}}Options) Run() error {
+func (o *{{ .Folder | title  }}{{ .Filename | title }}Options) Run() error {
 
-    // You must still add the NewCmd{{.Folder | strings.Title }}{{.Filename | strings.Title}} to a base command though!
+    // You must still add the NewCmd{{ .Folder | title  }}{{ .Filename | title }} to a base command though!
     //   On a base command you need the line
-    // 'cmd.AddCommand(NewCmd{{.Folder | strings.Title }}{{.Filename | strings.Title}}(commonOpts))''
+    // 'cmd.AddCommand(NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts))''
     //   then rebuild the binary!
     log.Logger().Infof("Nice Job configuring this to run %s", path)
 
@@ -98,6 +101,7 @@ type UtilGenerateFunctionOptions struct {
 	ShortDescription string
 	SupportedOptions SupportedOptions
 	ChosenOption     string
+	NoExtensionFilename	string
 
 }
 
@@ -164,9 +168,22 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		matched, _ := regexp.MatchString(`(.*\.go)`, o.Filename)
 		if !matched {
 			log.Logger().Debugln("adding .go extension")
+			o.NoExtensionFilename = o.Filename
+			log.Logger().Debugf("No Extension var set to: %s", o.NoExtensionFilename)
 			o.Filename = o.Filename+".go"
 		} else {
 			log.Logger().Debugln("Not adding .go extension")
+
+			var extension = filepath.Ext(o.Filename)
+			o.NoExtensionFilename = o.NoExtensionFilename[0:len(o.Filename)-len(extension)]
+		}
+	}
+	var fullFilePath = "./pkg/cmd/" + util.StripTrailingSlash(o.Folder) + "/" + o.Filename
+	b, err := util.FileExists(fullFilePath)
+	if b {
+		response := util.Confirm("Are you Sure you want to override the file that already exists? This is NOT recommended", false, "that file name already exists, confirming this will override it", o.In, o.Out, o.Err)
+		if !response { //answered no I don't
+			return nil
 		}
 	}
 	//o.ChosenOption, err = avutils.Pick(o.CommonOptions, "What Set of Options would like to use", structs.Names(&SupportedOptions{}), "CommonOptions")
@@ -191,14 +208,39 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	}
 
 
-	t := template.Must(template.New("template").Parse(FunctionGenerationTemplate))
+	if exists, _ := util.DirExists("./pkg/cmd/"+o.Folder); !exists {
+		err := os.MkdirAll("./pkg/cmd/"+o.Folder, 0760)
+		if err != nil {
+			return errors.Wrap(err, "couldn't make dir for folder")
+		}
+
+	}
+
+	t := template.Must(template.New("template").Funcs(TemplateFUNctionMap).Parse(FunctionGenerationTemplate))
 	if t == nil {
 		return errors.Wrap(nil, "something when wrong parsing the template")
 	}
-	err = t.Execute(o.Out, o)
+	f, err := os.Create(fullFilePath)
+	if err != nil {
+		return err
+	}
+	err = t.Execute(f, o)
 	if err != nil {
 		return errors.Wrapf(err, "Error executing template %s", t.Name())
 	}
 
 	return nil
 }
+
+
+// ParseFiles creates a new Template and parses the template definitions from
+// the named files. The returned template's name will have the base name and
+// parsed contents of the first file. There must be at least one file.
+// If an error occurs, parsing stops and the returned *Template is nil.
+//
+// When parsing multiple files with the same name in different directories,
+// the last one mentioned will be the one that results.
+// For instance, ParseFiles("a/foo", "b/foo") stores "b/foo" as the template
+// named "foo", while "a/foo" is unavailable.
+//func ParseFiles(filenames ...string) (*Template, error) {
+//	return parseFiles(nil, filenames...)

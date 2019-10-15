@@ -23,3 +23,21 @@ func Pick(o *opts.CommonOptions, message string, names []string, defaultChoice s
 	err := survey.AskOne(prompt, &name, nil, surveyOpts)
 	return name, err
 }
+//
+//func PickBoolean(o *opts.CommonOptions, message string, defaultValue bool) (string, error) {
+//	if message == "" {
+//		return "", errors.New("message Required")
+//	}
+//	surveyOpts := survey.WithStdio(o.In, o.Out, o.Err)
+//	prompt := &survey.Confirm{
+//		Message: message,
+//		Default: defaultValue,
+//	}
+//	response := ""
+//	err := survey.AskOne(prompt, &response, nil, surveyOpts)
+//	if err != nil {
+//		return "", errors.Wrap(err, "Couldn't Understand Response")
+//	}
+//
+//
+//}
