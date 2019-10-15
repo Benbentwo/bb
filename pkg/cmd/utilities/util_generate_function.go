@@ -27,36 +27,38 @@ package {{ .Folder | toLower  }}
 import (
     "github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
+	"github.com/jenkins-x/jx/pkg/cmd/opts"
+	"github.com/jenkins-x/jx/pkg/cmd/templates"
 	"github.com/spf13/cobra"
 )
 
 
 // GetAddonOptions the command line options
-type {{ .NoExtensionFilename | title }}Options struct {
+type {{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options struct {
 	*	opts.CommonOptions
 	batch       bool
 }
 
 var (
-	{{ .Folder | toLower  }}_{{ .Filename | toLower  }}_long = templates.LongDesc("
+	{{ .Folder | toLower  }}_{{ .NoExtensionFilename | toLower  }}_long = templates.LongDesc("
 {{ .LongDescription }}
 ")
 
-	{{ .Folder | toLower }}_{{ .Filename | toLower }}_example = templates.Examples("
+	{{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_example = templates.Examples("
 {{ .ExampleString }}
 ")
 )
 
-func NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
-	options := &{{ .Folder | title }}{{ .Filename | title  }}Options {
+func NewCmd{{ .Folder | title  }}{{ .NoExtensionFilename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
+	options := &{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options {
         CommonOptions: commonOpts,
 	}
 
 	cmd := &cobra.Command{
 		Use:     "{{ .CommandUse | toLower }}",
 		Short:   "{{ .ShortDescription }}",
-		Long:    {{ .Folder | toLower }}_{{ .Filename | toLower }}_long,
-		Example: {{ .Folder | toLower }}_{{ .Filename | toLower }}_example,
+		Long:    {{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_long,
+		Example: {{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_example,
 		Run: func(cmd *cobra.Command, args []string) {
 			options.Cmd = cmd
 			options.Args = args
@@ -72,7 +74,7 @@ func NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts *opts.Common
 
 
 // Run implements this command
-func (o *{{ .Folder | title  }}{{ .Filename | title }}Options) Run() error {
+func (o *{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options) Run() error {
 
     // You must still add the NewCmd{{ .Folder | title  }}{{ .Filename | title }} to a base command though!
     //   On a base command you need the line
