@@ -84,7 +84,6 @@ func (o *{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options) Run() 
 
 }
 `
-
 type SupportedOptions struct {
 	UtilOptions
 	opts.CommonOptions
