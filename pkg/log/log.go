@@ -211,3 +211,34 @@ func fileExists(path string) (bool, error) {
 	}
 	return true, errors.Wrapf(err, "failed to check if file exists %s", path)
 }
+
+
+// Helper functions so you can import AV log and just say log.Debug("some string %s", stringVar)
+func Var(variable string, value ...interface{}) {
+	Logger().Debugf("VAR %s: %s", variable, value)
+}
+//	most Verbose
+func Trace(someString string, args ...interface{}) {
+	Logger().Tracef(someString, args)
+}
+// Requires verbose
+func Debug(someString string, args ...interface{}) {
+	Logger().Debugf(someString, args)
+}
+// Info for the user
+func Info(someString string, args ...interface{}) {
+	Logger().Infof(someString, args)
+}
+// Warn the user
+func Warn(someString string, args ...interface{}) {
+	Logger().Warnf(someString, args)
+}
+// Tell the user of an error, doesn't determine fatality
+func Error(someString string, args ...interface{}) {
+	Logger().Errorf(someString, args)
+}
+// Tell the user an error that was fatal
+func Fatal(someString string, err error, args ...interface{}) error {
+	Error(someString, args)
+	return err
+}

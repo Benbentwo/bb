@@ -3,7 +3,6 @@ package utilities
 import (
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
-	"github.com/jenkins-x/jx/pkg/cmd/templates"
 	"github.com/spf13/cobra"
 )
 
@@ -12,31 +11,13 @@ type UtilOptions struct {
 	Output 	string
 }
 
-var (
-	get_long = templates.LongDesc(`
-		# Run a utility function
-			av util [FUNCTION]
-`)
-
-	get_example = templates.Examples(`
-		Runs Supporting Functions, options include:
-		* searchfile
-		* generate function
-	`)
-)
-
-// NewCmdGet creates a command object for the generic "get" action, which
-// retrieves one or more resources from a server.
 func NewCmdUtil(commonOpts *opts.CommonOptions) *cobra.Command {
 	options := &UtilOptions{
 		CommonOptions: commonOpts,
 	}
 
 	cmd := &cobra.Command{
-		Use:     "util FUNC [flags]",
-		Short:   "Run a Utility",
-		Long:    get_long,
-		Example: get_example,
+		Use:     "util",
 		Run: func(cmd *cobra.Command, args []string) {
 			options.Cmd = cmd
 			options.Args = args

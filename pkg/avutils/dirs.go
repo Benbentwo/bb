@@ -111,6 +111,23 @@ func ListSubDirectories(inputDir string) []string {
 	return splice
 }
 
+func ListFilesInDir(inputDir string) []string {
+	inputDir = HomeReplace(inputDir) //replace ~
+	files, err := ioutil.ReadDir(inputDir) //get an array of file objects
+	if err != nil {
+		log.Logger().Errorf("Couldn't list files in %s", inputDir)
+	}
+	var splice = make([]string, 0) //create an empty array
+
+	for _, f := range files { //for each file, get the name and append it to the list
+		if !f.IsDir() {
+			log.Logger().Debugln(f.Name())
+			splice = append(splice, f.Name())
+		}
+	}
+	return splice
+}
+
 func HomeReplace(input string) string {
 	return strings.NewReplacer("~", os.Getenv("HOME")).Replace(input)
 }

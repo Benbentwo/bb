@@ -2,13 +2,14 @@ package utilities
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
+	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
-	"github.com/jenkins-x/jx/pkg/log"
 	"github.com/jenkins-x/jx/pkg/util"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -21,69 +22,11 @@ var TemplateFUNctionMap = template.FuncMap{
 	"toLower": strings.ToLower,
 }
 
-const FunctionGenerationTemplate = `
-package {{ .Folder | toLower  }}
-
-import (
-    "github.ablevets.com/Digital-Transformation/av/pkg/log"
-	"github.com/jenkins-x/jx/pkg/cmd/helper"
-	"github.com/jenkins-x/jx/pkg/cmd/opts"
-	"github.com/jenkins-x/jx/pkg/cmd/templates"
-	"github.com/spf13/cobra"
-)
-
-
-// GetAddonOptions the command line options
-type {{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options struct {
-	*	opts.CommonOptions
-	batch       bool
-}
-
-var (
-	{{ .Folder | toLower  }}_{{ .NoExtensionFilename | toLower  }}_long = templates.LongDesc("
-{{ .LongDescription }}
-")
-
-	{{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_example = templates.Examples("
-{{ .ExampleString }}
-")
-)
-
-func NewCmd{{ .Folder | title  }}{{ .NoExtensionFilename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
-	options := &{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options {
-        CommonOptions: commonOpts,
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
-
-	cmd := &cobra.Command{
-		Use:     "{{ .CommandUse | toLower }}",
-		Short:   "{{ .ShortDescription }}",
-		Long:    {{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_long,
-		Example: {{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_example,
-		Run: func(cmd *cobra.Command, args []string) {
-			options.Cmd = cmd
-			options.Args = args
-			err := options.Run()
-			helper.CheckErr(err)
-		},
-	}
-	// this command is not intended to be run in batch mode...
-	cmd.Flags().BoolVarP(&options.batch, "batch", "b", false, "Batch commands don't prompt for user input")
-
-	return cmd
 }
-
-
-// Run implements this command
-func (o *{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options) Run() error {
-
-    // You must still add the NewCmd{{ .Folder | title  }}{{ .Filename | title }} to a base command though!
-    //   On a base command you need the line
-    // 'cmd.AddCommand(NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts))''
-    //   then rebuild the binary!
-    log.Logger().Infof("Nice Job configuring this to run %s", path)
-
-}
-`
 type SupportedOptions struct {
 	UtilOptions
 	opts.CommonOptions
@@ -103,6 +46,7 @@ type UtilGenerateFunctionOptions struct {
 	SupportedOptions SupportedOptions
 	ChosenOption     string
 	NoExtensionFilename	string
+	TemplateFile		string
 
 }
 
@@ -163,14 +107,11 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	}
 	if o.Filename == "" {
 		o.Filename, err = util.PickValue("What would you like to call the file", "",true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
-		if err != nil {
-			return err
-		}
+		check(err)
 		matched, _ := regexp.MatchString(`(.*\.go)`, o.Filename)
 		if !matched {
-			log.Logger().Debugln("adding .go extension")
+			log.Logger().Debugln("Adding .go extension")
 			o.NoExtensionFilename = o.Filename
-			log.Logger().Debugf("No Extension var set to: %s", o.NoExtensionFilename)
 			o.Filename = o.Filename+".go"
 		} else {
 			log.Logger().Debugln("Not adding .go extension")
@@ -187,39 +128,40 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 			return nil
 		}
 	}
-	//o.ChosenOption, err = avutils.Pick(o.CommonOptions, "What Set of Options would like to use", structs.Names(&SupportedOptions{}), "CommonOptions")
-	//if err != nil {
-	//	return err
-	//}
-	o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", "",true, "Command Use", o.In, o.Out, o.Err)
-	if err != nil {
-		return err
-	}
-	o.ShortDescription, err = util.PickValue("What would you like for the short description, this should be a single word, or hyphenated", "",true, "Long Description", o.In, o.Out, o.Err)
-	if err != nil {
-		return err
-	}
-	o.LongDescription, err = util.PickValue("What would you like for the long description", "",true, "Long Description", o.In, o.Out, o.Err)
-	if err != nil {
-		return err
-	}
-	o.ExampleString, err = util.PickValue("What would you like for the example command", "",true, "Example command", o.In, o.Out, o.Err)
-	if err != nil {
-		return err
-	}
 
+	{
+
+
+	o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", "",true, "Command Use", o.In, o.Out, o.Err)
+	check(err)
+	o.ShortDescription, err = util.PickValue("What would you like for the short description, this should be a single word, or hyphenated", "",true, "Long Description", o.In, o.Out, o.Err)
+	check(err)
+	o.LongDescription, err = util.PickValue("What would you like for the long description", "",true, "Long Description", o.In, o.Out, o.Err)
+	check(err)
+	o.ExampleString, err = util.PickValue("What would you like for the example command", "",true, "Example command", o.In, o.Out, o.Err)
+	check(err)
 
 	if exists, _ := util.DirExists("./pkg/cmd/"+o.Folder); !exists {
 		err := os.MkdirAll("./pkg/cmd/"+o.Folder, 0760)
 		if err != nil {
 			return errors.Wrap(err, "couldn't make dir for folder")
 		}
-
 	}
+	}
+	o.TemplateFile, err = avutils.Pick(o.CommonOptions, "What template would you like to use?", avutils.ListFilesInDir("./templates"), "template_command.txt")
+	check(err)
 
-	t := template.Must(template.New("template").Funcs(TemplateFUNctionMap).Parse(FunctionGenerationTemplate))
+	//
+	var FunctionGenerationTemplate, errRead = ioutil.ReadFile("templates/"+o.TemplateFile)
+	check(errRead)
+	//FunctionGenerationTemplate = []byte(string(FunctionGenerationTemplate))
+
+
+	t := template.Must(template.New("template").Funcs(TemplateFUNctionMap).Parse(string(FunctionGenerationTemplate)))
+	log.Var("t", t)
+
 	if t == nil {
-		return errors.Wrap(nil, "something when wrong parsing the template")
+		return log.Fatal("Unable to parse template %s", nil)
 	}
 	f, err := os.Create(fullFilePath)
 	if err != nil {

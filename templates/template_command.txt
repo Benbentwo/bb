@@ -1,43 +1,40 @@
-package {{ .folder }}
+package {{ .Folder | toLower  }}
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
     "github.ablevets.com/Digital-Transformation/av/pkg/log"
-	"github.com/fatih/structs"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
-	"github.com/jenkins-x/jx/pkg/util"
-	"github.com/pkg/errors"
+	"github.com/jenkins-x/jx/pkg/cmd/templates"
 	"github.com/spf13/cobra"
 )
 
 
-// GetAddonOptions the command line options
-type {{ .folder }}{{.filename}}Options struct {
-	*opts.CommonOptions
+// options for the command
+type {{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options struct {
+	*	opts.CommonOptions
 	batch       bool
 }
 
 var (
-	{{.folder}}_{{.filename}}_long = templates.LongDesc(`
-		{{.longDescription}}
+	{{ .Folder | toLower  }}_{{ .NoExtensionFilename | toLower  }}_long = templates.LongDesc(`
+{{ .LongDescription }}
 `)
 
-	{{.folder}}_{{.filename}}_example = templates.Examples(`
-        {{.exampleString}}
-	`)
+	{{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_example = templates.Examples(`
+{{ .ExampleString }}
+`)
 )
 
-func NewCmd{{.folder}}{{.filename}}(commonOpts *opts.CommonOptions) *cobra.Command {
-	options := &{{.folder}}{{.filename}}Options {
-        CommonOptions: commonOpts,
+func NewCmd{{ .Folder | title  }}{{ .NoExtensionFilename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
+	options := &{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options {
+       CommonOptions: commonOpts,
 	}
 
 	cmd := &cobra.Command{
-		Use:     "{{.commandUse}}",
-		Short:   "{{.shortDescription}}",
-		Long:    {{.folder}}_{{.filename}}_long,
-		Example: {{.folder}}_{{.filename}}_example,
+		Use:     "{{ .CommandUse | toLower }}",
+		Short:   "{{ .ShortDescription }}",
+		Long:    {{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_long,
+		Example: {{ .Folder | toLower }}_{{ .NoExtensionFilename | toLower }}_example,
 		Run: func(cmd *cobra.Command, args []string) {
 			options.Cmd = cmd
 			options.Args = args
@@ -53,12 +50,6 @@ func NewCmd{{.folder}}{{.filename}}(commonOpts *opts.CommonOptions) *cobra.Comma
 
 
 // Run implements this command
-func (o *{{.folder}}{{.filename}}Options) Run() error {
-
-    // You must still add the NewCmd{{.folder}}{{.filename}} to a base command though!
-    //   On a base command you need the line
-    // `cmd.AddCommand(NewCmd{{.folder}}{{.filename}}(commonOpts))`
-    //   then rebuild the binary!
-    log.Logger().Infof("Nice Job configuring this to run %s", path)
-
+func (o *{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options) Run() error {
+    log.Info("now add 'cmd.AddCommand(NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts))' to a base command"
 }

@@ -2,6 +2,7 @@ package cmd
 
 import (
 	initialize "github.ablevets.com/Digital-Transformation/av/pkg/cmd/init"
+	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/setup"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/uninstall"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/utilities"
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
@@ -58,6 +59,12 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			Message: "AV Utility Functions:",
 			Commands: []*cobra.Command{
 				utilities.NewCmdUtil(commonOpts),
+			},
+		},
+		{
+			Message: "setup",
+			Commands: []*cobra.Command{
+				setup.NewCmdSetup(commonOpts),
 			},
 		},
 	}
