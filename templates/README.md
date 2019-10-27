@@ -1,0 +1,1 @@
+These files are used by the [Generate Function File](../pkg/cmd/util/util_generate_function.go) to generate code for this repo.

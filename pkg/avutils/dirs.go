@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -121,6 +122,26 @@ func ListFilesInDir(inputDir string) []string {
 
 	for _, f := range files { //for each file, get the name and append it to the list
 		if !f.IsDir() {
+			log.Logger().Debugln(f.Name())
+			splice = append(splice, f.Name())
+		}
+	}
+	return splice
+}
+func ListFilesInDirFilter(inputDir string, filter string) []string {
+	inputDir = HomeReplace(inputDir) //replace ~
+	files, err := ioutil.ReadDir(inputDir) //get an array of file objects
+	if err != nil {
+		log.Logger().Errorf("Couldn't list files in %s", inputDir)
+	}
+	var splice = make([]string, 0) //create an empty array
+
+	for _, f := range files { //for each file, get the name and append it to the list
+		matched, err := regexp.MatchString(filter, f.Name())
+		if err != nil {
+			return nil
+		}
+		if !f.IsDir() && matched{
 			log.Logger().Debugln(f.Name())
 			splice = append(splice, f.Name())
 		}

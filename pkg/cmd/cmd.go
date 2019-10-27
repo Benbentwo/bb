@@ -4,7 +4,7 @@ import (
 	initialize "github.ablevets.com/Digital-Transformation/av/pkg/cmd/init"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/setup"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/uninstall"
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/utilities"
+	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/util"
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
@@ -43,6 +43,7 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 		}
 	}
 	groups := templates.CommandGroups{
+		// Section to add commands to:
 		{
 			Message: "Installing and initializing AV:",
 			Commands: []*cobra.Command{
@@ -58,7 +59,7 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 		{
 			Message: "AV Utility Functions:",
 			Commands: []*cobra.Command{
-				utilities.NewCmdUtil(commonOpts),
+				util.NewCmdUtil(commonOpts),
 			},
 		},
 		{

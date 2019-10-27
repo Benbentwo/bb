@@ -1,4 +1,4 @@
-package utilities
+package util
 
 import (
 	"github.com/jenkins-x/jx/pkg/cmd/helper"

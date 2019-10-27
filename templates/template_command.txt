@@ -25,7 +25,7 @@ var (
 `)
 )
 
-func NewCmd{{ .Folder | title  }}{{ .NoExtensionFilename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
+func NewCmd{{ .File | title  }}{{ .NoExtensionFilename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
 	options := &{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options {
        CommonOptions: commonOpts,
 	}

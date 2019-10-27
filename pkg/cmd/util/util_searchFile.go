@@ -1,4 +1,4 @@
-package utilities
+package util
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
@@ -66,7 +66,7 @@ func (o *UtilSearchFileOptions) Run() error {
 		return util.MissingOption("search-string")
 	}
 	o.SearchFile = avutils.HomeReplace(o.SearchFile)
-	count, err := avutils.PrintMatchesInFile(o.SearchString, o.SearchFile)
+	count, err := avutils.FindMatchesInFile(o.SearchString, o.SearchFile)
 	if err != nil {
 		return errors.Wrapf(err,"Could not search the file %s for the string %s.", o.SearchFile, o.SearchString)
 	}

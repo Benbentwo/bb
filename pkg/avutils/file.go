@@ -36,7 +36,7 @@ func DoesFileContainString( s string, pathToFile string) (bool, int, error) {
 	return false,-1, nil
 }
 
-func PrintMatchesInFile( s string, pathToFile string) ([]int, error) {
+func FindMatchesInFile( s string, pathToFile string) ([]int, error) {
 	replacer := strings.NewReplacer("~", os.Getenv("HOME"))
 	pathToFile = replacer.Replace(pathToFile)
 	logs.Debugf("Looking for text : %s", s)
