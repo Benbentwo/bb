@@ -45,7 +45,6 @@ func NewCmdSetup(commonOpts *opts.CommonOptions) *cobra.Command {
 	}
 
 	// Section to add commands to:
-cmd.AddCommand(NewCmdDev(commonOpts))
 	return cmd
 }
 
