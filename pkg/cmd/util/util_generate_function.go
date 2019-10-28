@@ -111,21 +111,23 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		log.Info("	which will create command structure similar to the commands.", nil)
 	}
 	if o.Folder == "" {
-		//o.Folder, err = util.PickValue("What Folder would you like to put this in", "",true, "Folder inside of cmd of this project root", o.In, o.Out, o.Err)
+		// o.Folder, err = util.PickValue("What Folder would you like to put this in", "",true, "Folder inside of cmd of this project root", o.In, o.Out, o.Err)
 		log.Info("What Folder would you like this in? starts in ./pkg/cmd/<your-answer>", nil)
 		log.Info("You can create new ones, and subdirectories ./pkg/cmd/a/b", nil)
-		//o.Folder, err = avutils.Pick(o.CommonOptions, "What Folder would you like this in (starting from pkg/cmd/...? you can create new directories", avutils.ListSubDirectories("./pkg/cmd/"), "dev")
+		// o.Folder, err = avutils.Pick(o.CommonOptions, "What Folder would you like this in (starting from pkg/cmd/...? you can create new directories", avutils.ListSubDirectories("./pkg/cmd/"), "dev")
 
-		o.Folder, err = avutils.Pick(o.CommonOptions, "What Folder would you like this in?", avutils.ListSubDirectories("./pkg/cmd/"), "dev")
+		o.Folder, err = avutils.Pick(o.CommonOptions, "What Folder would you like this in?", avutils.ListSubDirectoriesRecusively("./pkg/cmd/"), "dev")
 		if err != nil {
 			return err
 		}
-		log.Info("Folder: %s", o.Folder)
+		log.Info("Folders: %s", o.Folder)
 	}
 
 	if o.Filename == "" {
 		if isBase {
-			o.Filename, err = util.PickValue("What would you like to call the file", o.Folder,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
+			splitPath := strings.Split(o.Folder,"/")
+			endFileName := splitPath[len(splitPath) -1]
+			o.Filename, err = avutils.PickValueFromPath("What would you like to call the file", endFileName,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 		} else {
 			o.Filename, err = util.PickValue("What would you like to call the file", "",true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 		}
@@ -142,7 +144,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 			o.NoExtensionFilename = o.NoExtensionFilename[0:len(o.Filename)-len(extension)]
 		}
 	}
-	var fullFilePath = "./pkg/cmd/" + util.StripTrailingSlash(o.Folder) + "/" + o.Filename
+	var fullFilePath = util.StripTrailingSlash(o.Folder) + "/" + o.Filename
 	b, err := util.FileExists(fullFilePath)
 	if b {
 		response := util.Confirm("Are you Sure you want to override the file that already exists? This is NOT recommended", false, "that file name already exists, confirming this will override it", o.In, o.Out, o.Err)
@@ -154,7 +156,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	{ 	// section for command stuff - braces help you collapse it in your IDE
 		if isBase {
 			log.Info("This is what you will use to call the command, util is the base command for generate-function")
-			fileNameStripped := RemoveGoExtension(o.CommandUse)
+			fileNameStripped := RemoveGoExtension(o.Filename)
 			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped,true, "Command Use", o.In, o.Out, o.Err)
 		} else {
 			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", "",true, "Command Use", o.In, o.Out, o.Err)
@@ -171,10 +173,14 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		}
 	}
 
+	var bases = make([]string, 0) //create an empty array
+	if isBase {
+		bases, err = FindBaseCommands("./pkg/cmd")
+	}
 	// File Gen - put it down here so we don't create the file till they answer all the questions
 	// if they ctrl-c we don't want empty files cluttering our project.
-	if exists, _ := util.DirExists("./pkg/cmd/"+o.Folder); !exists {
-		err := os.MkdirAll("./pkg/cmd/"+o.Folder, 0760)
+	if exists, _ := util.DirExists(o.Folder); !exists {
+		err := os.MkdirAll(o.Folder, 0760)
 		if err != nil {
 			return errors.Wrap(err, "couldn't make dir for folder")
 		}
@@ -202,11 +208,10 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	if !isBase {
 		return nil // We're done here
 	}
-
 	// BASE command stuff continues on
-	var bases = make([]string, 0) //create an empty array
 
-	bases, err = FindBaseCommands("./pkg/cmd")
+
+
 	log.Debug("BASES: %s", bases)
 	var pickedBase = ""
 	pickedBase, err = avutils.Pick(o.CommonOptions, "What template would you like to use?", bases, "template_command.txt")

@@ -1,6 +1,7 @@
 package avutils
 
 import (
+	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/errors"
 	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"io/ioutil"
 	"os"
@@ -109,6 +110,21 @@ func ListSubDirectories(inputDir string) []string {
 			splice = append(splice, f.Name())
 		}
 	}
+	return splice
+}
+
+// I realize the above function and this could be joined with a boolean parameter but with the different implementation
+// I didn't feel like doing it immediately.
+func ListSubDirectoriesRecusively(inputDir string) []string {
+	var splice = make([]string, 0)
+	e := filepath.Walk(inputDir, func(path string, info os.FileInfo, err error) error {
+		// log.Debug("Walking Path: %s", path)
+		if err == nil && info.IsDir(){
+			splice = append(splice, path)
+		}
+		return nil
+	})
+	errors.Check(e)
 	return splice
 }
 

@@ -26,6 +26,7 @@ func NewCmdUtil(commonOpts *opts.CommonOptions) *cobra.Command {
 		},
 	}
 	options.AddUtilFlags(cmd)
+	// Section to add commands to:
 	cmd.AddCommand(NewCmdUtilitySearchFile(commonOpts))
 	cmd.AddCommand(NewCmdUtilityGenerateFunction(commonOpts))
 	return cmd

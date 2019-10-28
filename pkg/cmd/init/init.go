@@ -2,12 +2,12 @@ package init
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	_ "github.com/jenkins-x/jx/pkg/auth"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
 	_ "github.com/jenkins-x/jx/pkg/gits"
+	"github.com/jenkins-x/jx/pkg/log"
 	"github.com/jenkins-x/jx/pkg/util"
 	"github.com/spf13/cobra"
 	_ "k8s.io/apimachinery/pkg/util/yaml"
@@ -26,10 +26,7 @@ type InitFlags struct {
 	ConfigDir		string
 	ProjectsDir		string
 }
-//type InitOptions struct {
-//	Dir 			string
-//
-//}
+
 var logs = log.Logger()
 
 var (
@@ -58,8 +55,8 @@ func NewCmdInit(commonOpts *opts.CommonOptions) *cobra.Command {
 			helper.CheckErr(err)
 		},
 	}
-	//cmd.Flags().StringVarP
 	options.AddInitFlags(cmd)
+	// Section to add commands to:
 	return cmd
 }
 

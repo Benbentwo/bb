@@ -65,6 +65,7 @@ func NewCmdUninstall(commonOpts *opts.CommonOptions) *cobra.Command {
 		},
 	}
 	options.AddUninstallFlags(cmd)
+	// Section to add commands to:
 	cmd.AddCommand(NewCmdUninstallBinary(commonOpts))
 	cmd.AddCommand(NewCmdUninstallConfig(commonOpts))
 	return cmd

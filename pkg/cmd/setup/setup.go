@@ -43,6 +43,8 @@ func NewCmdSetup(commonOpts *opts.CommonOptions) *cobra.Command {
 			helper.CheckErr(err)
 		},
 	}
+
+	// Section to add commands to:
 	return cmd
 }
 
