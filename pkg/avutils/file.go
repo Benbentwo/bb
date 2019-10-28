@@ -59,5 +59,6 @@ func FindMatchesInFile( s string, pathToFile string) ([]int, error) {
 	if someError := scanner.Err(); someError != nil {
 		return listLineNumbers, err
 	}
+	logs.Debugf("Found %s", listLineNumbers)
 	return listLineNumbers, nil
 }

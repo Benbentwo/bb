@@ -155,7 +155,6 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 
 	{ 	// section for command stuff - braces help you collapse it in your IDE
 		if isBase {
-			log.Info("This is what you will use to call the command, util is the base command for generate-function")
 			fileNameStripped := RemoveGoExtension(o.Filename)
 			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped,true, "Command Use", o.In, o.Out, o.Err)
 		} else {
@@ -214,7 +213,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 
 	log.Debug("BASES: %s", bases)
 	var pickedBase = ""
-	pickedBase, err = avutils.Pick(o.CommonOptions, "What template would you like to use?", bases, "template_command.txt")
+	pickedBase, err = avutils.Pick(o.CommonOptions, "What base file would you like to use?", bases, "template_command.txt")
 	check(err)
 	log.Var("PICKED BASE", pickedBase)
 
@@ -225,7 +224,8 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	if pickedBase == "pkg/cmd/cmd.go" {
 
 	} else {
-		err = addNewCmdToBaseFile(pickedBase, "NewCmd"+strings.Title(o.CommandUse))
+		// NewCmdDev(commonOpts *opts.CommonOptions)
+		err = addNewCmdToBaseFile(pickedBase, "cmd.AddCommand(NewCmd"+strings.Title(o.CommandUse)+"(commonOpts))\n")
 	}
 	check(err)
 
@@ -263,7 +263,7 @@ func FindLineToInsertCommandTo(path string, search string) (int, error) {
 		// TODO add support for multiple finds incase there are multiple declarations in one file that we want to support
 		//   e.g. Theres NewCmdUtil and NewCmdUtility or something.
 	}
-	return arr[0]+1, nil
+	return arr[0], nil
 }
 
 // Common practice should be make an exportable (Titled func) generic, then make a local named the same call with your default value.
