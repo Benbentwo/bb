@@ -42,8 +42,6 @@ func NewCmd{{ .TitledFolderFilename }}(commonOpts *opts.CommonOptions) *cobra.Co
 			helper.CheckErr(err)
 		},
 	}
-	// this command is not intended to be run in batch mode...
-	cmd.Flags().BoolVarP(&options.batch, "batch", "b", false, "Batch commands don't prompt for user input")
 
 	return cmd
 }
@@ -51,6 +49,6 @@ func NewCmd{{ .TitledFolderFilename }}(commonOpts *opts.CommonOptions) *cobra.Co
 
 // Run implements this command
 func (o *{{ .TitledFolderFilename  }}Options) Run() error {
-    log.Info("now add 'cmd.AddCommand(NewCmd{{ .TitledFolderFilename }}(commonOpts))' to a base command")
+	log.Logger().Infof("Congratulations generating %s", o.Cmd.Use)
     return nil
 }

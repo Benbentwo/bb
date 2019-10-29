@@ -32,7 +32,6 @@ func NewCmdJenkins(commonOpts *opts.CommonOptions) *cobra.Command {
 	// the line above this and below can be deleted.
 	// DO NOT DELETE THE FOLLOWING LINE:
 	// Section to add commands to:
-
 	return cmd
 }
 

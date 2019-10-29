@@ -154,10 +154,8 @@ func (f *JenkinsXTextFormat) Format(entry *logrus.Entry) ([]byte, error) {
 	level := strings.ToUpper(entry.Level.String())
 	switch level {
 	case "INFO":
-		if f.ShowInfoLevel {
-			b.WriteString(colorStatus(level))
-			b.WriteString(": ")
-		}
+		b.WriteString(colorInfo(level))
+		b.WriteString(": ")
 	case "WARNING":
 		b.WriteString(colorWarn(level))
 		b.WriteString(": ")
