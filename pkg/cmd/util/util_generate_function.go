@@ -179,9 +179,9 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	}
 
 	var bases = make([]string, 0) //create an empty array
-	if isBase {
+	// if isBase {
 		bases, err = FindBaseCommands("./pkg/cmd")
-	}
+	// }
 	// File Gen - put it down here so we don't create the file till they answer all the questions
 	// if they ctrl-c we don't want empty files cluttering our project.
 	if exists, _ := util.DirExists(path); !exists {
@@ -210,9 +210,9 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	if err != nil {
 		return errors.Wrapf(err, "Error executing template %s", t.Name())
 	}
-	if !isBase {
-		return nil // We're done here
-	}
+	// if !isBase {
+	// 	return nil // We're done here
+	// }
 	// BASE command stuff continues on
 
 
@@ -227,11 +227,15 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	//   which is found by running just `av` - it shows groups
 	//   vs anything else in which case we just add the New Cmd string.
 	// Must match Template of generated function
-	if pickedBase == "pkg/cmd/cmd.go" {
+	if isBase {
+		if pickedBase == "pkg/cmd/cmd.go" {
 
-	} else {
-		// NewCmdDev(commonOpts *opts.CommonOptions)
-		err = addNewCmdToBaseFile(pickedBase, "cmd.AddCommand(NewCmd"+strings.Title(o.CommandUse)+"(commonOpts))\n")
+		} else {
+			// NewCmdDev(commonOpts *opts.CommonOptions)
+			err = addNewCmdToBaseFile(pickedBase, "cmd.AddCommand(NewCmd"+strings.Title(o.CommandUse)+"(commonOpts))\n")
+		}
+	} else { // adding a generationCommand to an existing base.
+		err = addNewCmdToBaseFile(pickedBase, "\tcmd.AddCommand(NewCmd"+o.TitledFolderFilename+"(commonOpts))\n")
 	}
 	check(err)
 
