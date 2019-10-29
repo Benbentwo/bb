@@ -122,14 +122,16 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		}
 		log.Info("Folders: %s", o.Folder)
 	}
-
+	var originalFilename = ""
 	if o.Filename == "" {
+		splitPath := strings.Split(o.Folder,"/")
+		endFileName := splitPath[len(splitPath) -1]
 		if isBase {
-			splitPath := strings.Split(o.Folder,"/")
-			endFileName := splitPath[len(splitPath) -1]
 			o.Filename, err = avutils.PickValueFromPath("What would you like to call the file", endFileName,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 		} else {
 			o.Filename, err = util.PickValue("What would you like to call the file", "",true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
+			originalFilename = o.Filename
+			o.Filename = strings.ToLower(endFileName) + "_" + o.Filename
 		}
 		check(err)
 		matched, _ := regexp.MatchString(`(.*\.go)`, o.Filename)
@@ -137,6 +139,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 			log.Logger().Debugln("Adding .go extension")
 			o.NoExtensionFilename = o.Filename
 			o.Filename = o.Filename+".go"
+			originalFilename += ".go"
 		} else {
 			log.Logger().Debugln("Not adding .go extension")
 
@@ -154,11 +157,11 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	}
 
 	{ 	// section for command stuff - braces help you collapse it in your IDE
+		fileNameStripped := RemoveGoExtension(originalFilename)
 		if isBase {
-			fileNameStripped := RemoveGoExtension(o.Filename)
 			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped,true, "Command Use", o.In, o.Out, o.Err)
 		} else {
-			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", "",true, "Command Use", o.In, o.Out, o.Err)
+			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped,true, "Command Use", o.In, o.Out, o.Err)
 		}
 		check(err)
 
@@ -213,7 +216,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 
 	log.Debug("BASES: %s", bases)
 	var pickedBase = ""
-	pickedBase, err = avutils.Pick(o.CommonOptions, "What base file would you like to use?", bases, "template_command.txt")
+	pickedBase, err = avutils.Pick(o.CommonOptions, "What base file would you like to use?", bases, "")
 	check(err)
 	log.Var("PICKED BASE", pickedBase)
 

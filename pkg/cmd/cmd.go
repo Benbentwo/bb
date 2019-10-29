@@ -2,6 +2,7 @@ package cmd
 
 import (
 	initialize "github.ablevets.com/Digital-Transformation/av/pkg/cmd/init"
+	jenkins "github.ablevets.com/Digital-Transformation/av/pkg/cmd/jenkins"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/setup"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/uninstall"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/util"
@@ -66,6 +67,12 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			Message: "setup",
 			Commands: []*cobra.Command{
 				setup.NewCmdSetup(commonOpts),
+			},
+		},
+		{
+			Message: "Jenkins Tools",
+			Commands: []*cobra.Command{
+				jenkins.NewCmdJenkins(commonOpts),
 			},
 		},
 	}
