@@ -42,8 +42,9 @@ type UtilGenerateFunctionOptions struct {
 	UtilOptions
 	isBaseCommand bool
 
-	Folder   string
-	Filename string
+	Folder               string
+	Filename             string
+	TitledFolderFilename string
 
 	LongDescription  string
 	ExampleString    string
@@ -122,16 +123,18 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		}
 		log.Info("Folders: %s", o.Folder)
 	}
+	var path = o.Folder
+	splitPath := strings.Split(o.Folder,"/")
+	o.Folder = splitPath[len(splitPath) -1]
 	var originalFilename = ""
 	if o.Filename == "" {
-		splitPath := strings.Split(o.Folder,"/")
-		endFileName := splitPath[len(splitPath) -1]
 		if isBase {
-			o.Filename, err = avutils.PickValueFromPath("What would you like to call the file", endFileName,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
+			o.Filename, err = avutils.PickValueFromPath("What would you like to call the file", o.Folder,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 		} else {
 			o.Filename, err = util.PickValue("What would you like to call the file", "",true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 			originalFilename = o.Filename
-			o.Filename = strings.ToLower(endFileName) + "_" + o.Filename
+			o.TitledFolderFilename = strings.Title(o.Folder)+strings.Title(RemoveGoExtension(o.Filename))
+			o.Filename = strings.ToLower(o.Folder) + "_" + o.Filename
 		}
 		check(err)
 		matched, _ := regexp.MatchString(`(.*\.go)`, o.Filename)
@@ -147,7 +150,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 			o.NoExtensionFilename = o.NoExtensionFilename[0:len(o.Filename)-len(extension)]
 		}
 	}
-	var fullFilePath = util.StripTrailingSlash(o.Folder) + "/" + o.Filename
+	var fullFilePath = util.StripTrailingSlash(path) + "/" + o.Filename
 	b, err := util.FileExists(fullFilePath)
 	if b {
 		response := util.Confirm("Are you Sure you want to override the file that already exists? This is NOT recommended", false, "that file name already exists, confirming this will override it", o.In, o.Out, o.Err)
@@ -181,8 +184,8 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	}
 	// File Gen - put it down here so we don't create the file till they answer all the questions
 	// if they ctrl-c we don't want empty files cluttering our project.
-	if exists, _ := util.DirExists(o.Folder); !exists {
-		err := os.MkdirAll(o.Folder, 0760)
+	if exists, _ := util.DirExists(path); !exists {
+		err := os.MkdirAll(path, 0760)
 		if err != nil {
 			return errors.Wrap(err, "couldn't make dir for folder")
 		}
@@ -334,5 +337,9 @@ func InsertStringToFile(path, str string, index int) error {
 }
 
 func RemoveGoExtension(fileName string) string {
-	return fileName[0:len(fileName)-len(".go")]
+	matched, _ := regexp.MatchString(`(.*\.go)`, fileName)
+	if matched {
+		return fileName[0:len(fileName)-len(".go")]
+	}
+	return fileName
 }

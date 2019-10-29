@@ -1,4 +1,4 @@
-package pkg
+package jenkins
 
 import (
 	"github.com/jenkins-x/jx/pkg/cmd/helper"

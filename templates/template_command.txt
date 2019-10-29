@@ -10,7 +10,7 @@ import (
 
 
 // options for the command
-type {{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options struct {
+type {{ .TitledFolderFilename  }}Options struct {
 	*	opts.CommonOptions
 	batch       bool
 }
@@ -25,8 +25,8 @@ var (
 `)
 )
 
-func NewCmd{{ .Filename | title  }}{{ .NoExtensionFilename | title }}(commonOpts *opts.CommonOptions) *cobra.Command {
-	options := &{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options {
+func NewCmd{{ .TitledFolderFilename }}(commonOpts *opts.CommonOptions) *cobra.Command {
+	options := &{{ .TitledFolderFilename  }}Options {
        CommonOptions: commonOpts,
 	}
 
@@ -50,6 +50,7 @@ func NewCmd{{ .Filename | title  }}{{ .NoExtensionFilename | title }}(commonOpts
 
 
 // Run implements this command
-func (o *{{ .Folder | title }}{{ .NoExtensionFilename | title  }}Options) Run() error {
-    log.Info("now add 'cmd.AddCommand(NewCmd{{ .Folder | title  }}{{ .Filename | title }}(commonOpts))' to a base command"
+func (o *{{ .TitledFolderFilename  }}Options) Run() error {
+    log.Info("now add 'cmd.AddCommand(NewCmd{{ .TitledFolderFilename }}(commonOpts))' to a base command")
+    return nil
 }
