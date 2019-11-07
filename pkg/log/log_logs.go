@@ -210,11 +210,12 @@ func fileExists(path string) (bool, error) {
 	return true, errors.Wrapf(err, "failed to check if file exists %s", path)
 }
 
-//TODO fix this
-func removeArgs(args *[]interface{}) {
+func removeArgs(args *[]interface{}) bool {
 	if len(*args) == 0{
 		args = nil
+		return true
 	}
+	return false
 }
 // Helper functions so you can import AV log and just say log.Debug("some string %s", stringVar)
 func Var(variable string, value ...interface{}) {
@@ -222,32 +223,56 @@ func Var(variable string, value ...interface{}) {
 }
 //	most Verbose
 func Trace(someString string, args ...interface{}) {
-	removeArgs(&args)
-	Logger().Tracef(someString, args)
+	unsetArgs := removeArgs(&args)
+	if unsetArgs {
+		Logger().Tracef(someString)
+	} else {
+		Logger().Tracef(someString, args)
+	}
 }
 // Requires verbose
 func Debug(someString string, args ...interface{}) {
-	removeArgs(&args)
-	Logger().Debugf(someString, args)
+	unsetArgs := removeArgs(&args)
+	if unsetArgs {
+		Logger().Debugf(someString)
+	} else {
+		Logger().Debugf(someString, args)
+	}
 }
 // Info for the user
 func Info(someString string, args ...interface{}) {
-	removeArgs(&args)
-	Logger().Infof(someString, args)
+	unsetArgs := removeArgs(&args)
+	if unsetArgs {
+		Logger().Infof(someString)
+	} else {
+		Logger().Infof(someString, args)
+	}
 }
 // Warn the user
 func Warn(someString string, args ...interface{}) {
-	removeArgs(&args)
-	Logger().Warnf(someString, args)
+	unsetArgs := removeArgs(&args)
+	if unsetArgs {
+		Logger().Warnf(someString)
+	} else {
+		Logger().Warnf(someString, args)
+	}
 }
 // Tell the user of an error, doesn't determine fatality
 func Error(someString string, args ...interface{}) {
-	removeArgs(&args)
-	Logger().Errorf(someString, args)
+	unsetArgs := removeArgs(&args)
+	if unsetArgs {
+		Logger().Errorf(someString)
+	} else {
+		Logger().Errorf(someString, args)
+	}
 }
 // Tell the user an error that was fatal
 func Fatal(someString string, err error, args ...interface{}) error {
-	removeArgs(&args)
-	Error(someString, args)
+	unsetArgs := removeArgs(&args)
+	if unsetArgs {
+		Error(someString)
+	} else {
+		Error(someString, args)
+	}
 	return err
 }

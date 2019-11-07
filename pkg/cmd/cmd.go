@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/github"
 	initialize "github.ablevets.com/Digital-Transformation/av/pkg/cmd/init"
 	jenkins "github.ablevets.com/Digital-Transformation/av/pkg/cmd/jenkins"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/setup"
@@ -73,6 +74,12 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			Message: "Jenkins Tools",
 			Commands: []*cobra.Command{
 				jenkins.NewCmdJenkins(commonOpts),
+			},
+		},
+		{
+			Message: "Github Tools",
+			Commands: []*cobra.Command{
+				github.NewCmdGh(commonOpts),
 			},
 		},
 	}

@@ -47,6 +47,7 @@ require (
 	go.opencensus.io v0.21.0 // indirect
 	gopkg.in/AlecAivazis/survey.v1 v1.8.7
 	gopkg.in/src-d/go-git.v4 v4.13.1 // indirect
+	gopkg.in/yaml.v2 v2.2.4
 	k8s.io/api v0.0.0-20190718183219-b59d8169aab5 // indirect
 	k8s.io/apiextensions-apiserver v0.0.0-20190718185103-d1ef975d28ce // indirect
 	k8s.io/apimachinery v0.0.0-20190703205208-4cfb76a8bf76
