@@ -31,7 +31,6 @@ require (
 	github.com/Netflix/go-expect v0.0.0-20190729225929-0e00d9168667 // indirect
 	github.com/Pallinder/go-randomdata v1.2.0 // indirect
 	github.com/fatih/color v1.7.0
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/heptio/sonobuoy v0.16.1 // indirect
 	github.com/jenkins-x/jx v0.0.0-20191002101425-246bdbf20015
 	github.com/petergtz/pegomock v2.6.0+incompatible // indirect
@@ -52,4 +51,5 @@ require (
 	k8s.io/apiextensions-apiserver v0.0.0-20190718185103-d1ef975d28ce // indirect
 	k8s.io/apimachinery v0.0.0-20190703205208-4cfb76a8bf76
 	k8s.io/client-go v11.0.1-0.20190409021438-1a26190bd76a+incompatible // indirect
+	sigs.k8s.io/yaml v1.1.0
 )

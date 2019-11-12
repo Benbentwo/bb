@@ -2,23 +2,21 @@ package init
 
 import (
 	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/github"
+	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	_ "github.com/jenkins-x/jx/pkg/auth"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
-	"github.com/jenkins-x/jx/pkg/cmd/create"
 	_ "github.com/jenkins-x/jx/pkg/gits"
 	"github.com/jenkins-x/jx/pkg/util"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	_ "gopkg.in/yaml.v2"
 	_ "k8s.io/apimachinery/pkg/util/yaml"
 	"os"
 	_ "path/filepath"
 	"runtime"
 	"strings"
-	_ "gopkg.in/yaml.v2"
 )
 
 const (
@@ -199,8 +197,8 @@ func SetupGitConfigFile(configPath string, o opts.CommonOptions){
 		if err != nil {
 			panic(err)
 		}
-		gitServerOptions := create.CreateGitServerOptions{
-			CreateOptions: create.CreateOptions{
+		gitServerOptions := github.CreateGitServerOptions{
+			CreateOptions: github.CreateOptions{
 				CommonOptions: &o,
 				DisableImport: true,
 				OutDir:        configPath,
@@ -212,58 +210,4 @@ func SetupGitConfigFile(configPath string, o opts.CommonOptions){
 		err = gitServerOptions.Run()
 		check(err)
 	}
-}
-
-// Run implements the command
-func  Run() error {
-	args := o.Args
-	kind := o.Kind
-	if kind == "" {
-		if len(args) < 1 {
-			return util.MissingOption("kind")
-		}
-		kind = args[0]
-	}
-	name := o.Name
-	if name == "" {
-		name = kind
-	}
-	gitUrl := o.URL
-	if gitUrl == "" {
-		if len(args) > 1 {
-			gitUrl = args[1]
-		} else {
-			// lets try find the git URL based on the provider
-			serviceName := gitKindToServiceName[kind]
-			if serviceName != "" {
-				url, err := o.FindService(serviceName)
-				if err != nil {
-					return errors.Wrapf(err, "Failed to find %s Git service %s", kind, serviceName)
-				}
-				gitUrl = url
-			}
-		}
-	}
-	if gitUrl == "" {
-		return util.MissingOption("url")
-	}
-
-	authConfigSvc, err := o.CreateGitAuthConfigService()
-	if err != nil {
-		return errors.Wrap(err, "failed to create CreateGitAuthConfigService")
-	}
-	config := authConfigSvc.Config()
-	server := config.GetOrCreateServerName(gitUrl, name, kind)
-	config.CurrentServer = gitUrl
-	err = authConfigSvc.SaveConfig()
-	if err != nil {
-		return errors.Wrap(err, "failed to save GitAuthConfigService")
-	}
-	log.Logger().Infof("Added Git server %s for URL %s", util.ColorInfo(name), util.ColorInfo(gitUrl))
-
-	err = o.EnsureGitServiceCRD(server)
-	if err != nil {
-		return err
-	}
-	return nil
 }
