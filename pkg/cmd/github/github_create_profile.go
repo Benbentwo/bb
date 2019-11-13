@@ -1,7 +1,7 @@
 package github
 
 import (
-    "github.ablevets.com/Digital-Transformation/av/pkg/log"
+    "github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -17,11 +17,11 @@ type GithubCreate_profileOptions struct {
 
 var (
 	github_github_create_profile_long = templates.LongDesc(`
-Create a github profile for GH or GHE and add to your ~/.av folder
+Create a github profile for GH or GHE and add to your ~/.bb folder
 `)
 
 	github_github_create_profile_example = templates.Examples(`
-av gh create profile
+bb gh create profile
 `)
 )
 

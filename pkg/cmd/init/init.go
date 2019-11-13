@@ -1,9 +1,9 @@
 package init
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/github"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/avutils"
+	"github.com/Benbentwo/bb/pkg/cmd/github"
+	"github.com/Benbentwo/bb/pkg/log"
 	_ "github.com/jenkins-x/jx/pkg/auth"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
@@ -20,8 +20,8 @@ import (
 )
 
 const (
-	AV_HOME_VAR = "AV_HOME"
-	AV_CONFIG_DIR = "~/.av"
+	BB_HOME_VAR = "BB_HOME"
+	BB_CONFIG_DIR = "~/.bb"
 )
 type InitOptions struct {
 	*opts.CommonOptions
@@ -38,10 +38,10 @@ var logs = log.Logger()
 var (
 	initLong = templates.LongDesc(`
 		This Command will setup the configuration for later use.
-		This will create configuration files in ~/.av/ that later av commands will use
+		This will create configuration files in ~/.bb/ that later bb commands will use
 `)
 	initExample = templates.Examples(`
-		av init	
+		bb init	
 `)
 )
 
@@ -51,7 +51,7 @@ func NewCmdInit(commonOpts *opts.CommonOptions) *cobra.Command {
 	}
 	cmd := &cobra.Command{
 		Use:			"init",
-		Short:			"Initializes the "+AV_CONFIG_DIR+" configuration directory",
+		Short:			"Initializes the "+BB_CONFIG_DIR+" configuration directory",
 		Long:			initLong,
 		Example:		initExample,
 		Run:			func(cmd *cobra.Command, args []string) {
@@ -75,7 +75,7 @@ func (o *InitOptions) Run() error {
 
 
 	replacer := strings.NewReplacer("~", os.Getenv("HOME"))
-	path := replacer.Replace(AV_CONFIG_DIR)
+	path := replacer.Replace(BB_CONFIG_DIR)
 
 	log.Blank()
 
@@ -85,7 +85,7 @@ func (o *InitOptions) Run() error {
 		return err
 	}
 	if !exists {
-		logs.Debugf("Directory `~/.av` not found... creating")
+		logs.Debugf("Directory `~/.bb` not found... creating")
 		err = os.MkdirAll(path, avutils.DefaultWritePermissions)
 		if err != nil {
 			return err
@@ -93,16 +93,16 @@ func (o *InitOptions) Run() error {
 	}
 
 	// Add to the bash profile
-	if os.Getenv(AV_HOME_VAR) != path {
-		logs.Debugf("AV HOME Set to %s", os.Getenv(AV_HOME_VAR))
+	if os.Getenv(BB_HOME_VAR) != path {
+		logs.Debugf("bb HOME Set to %s", os.Getenv(BB_HOME_VAR))
 		logs.Debugf("Path Set to %s", path)
 		// set current shell
-		err = os.Setenv(AV_HOME_VAR, path)
+		err = os.Setenv(BB_HOME_VAR, path)
 		if err != nil {
 			return err
 		}
 
-		stringExists,line, err := avutils.DoesFileContainString("export AV_HOME=~/.av", "~/.bash_profile")
+		stringExists,line, err := avutils.DoesFileContainString("export BB_HOME=~/.bb", "~/.bash_profile")
 		if err != nil {
 			return err
 		}
@@ -119,10 +119,10 @@ func (o *InitOptions) Run() error {
 			defer f.Close()
 			var carriage= GetCarriageReturn()
 
-			if _, err = f.WriteString("export AV_HOME=" + path + carriage); err != nil {
+			if _, err = f.WriteString("export BB_HOME=" + path + carriage); err != nil {
 				panic(err)
 			}
-			log.Logger().Debugf("Updated Bash Profile to include AV_HOME")
+			log.Logger().Debugf("Updated Bash Profile to include BB_HOME")
 		}
 	}
 
@@ -146,7 +146,7 @@ func (o *InitOptions) Run() error {
 	}
 
 	log.Blank()
-	log.Logger().Infof("SUCCESS: AV Directory configured to %s", path)
+	log.Logger().Infof("SUCCESS: bb Directory configured to %s", path)
 	return nil
 }
 

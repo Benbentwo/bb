@@ -1,8 +1,8 @@
 package avutils
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/errors"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/cmd/errors"
+	"github.com/Benbentwo/bb/pkg/log"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -25,14 +25,14 @@ func HomeDir() string {
 	return h
 }
 
-// Checks fi the AV_HOME variable is set, if it isn't it makes it in the default directory
+// Checks fi the BB_HOME variable is set, if it isn't it makes it in the default directory
 func ConfigDir() (string, error) {
-	path := os.Getenv("AV_HOME")
+	path := os.Getenv("BB_HOME")
 	if path != "" {
 		return path, nil
 	}
 	h := HomeDir()
-	path = filepath.Join(h, ".av")
+	path = filepath.Join(h, ".bb")
 	err := os.MkdirAll(path, DefaultWritePermissions)
 	if err != nil {
 		return "", err
@@ -50,7 +50,7 @@ func KubeConfigFile() string {
 	return filepath.Join(h, ".kube", "config")
 }
 
-// JXBinLocation finds the AV config directory and creates a bin directory inside it if it does not already exist. Returns the AV bin path
+// JXBinLocation finds the bb config directory and creates a bin directory inside it if it does not already exist. Returns the bb bin path
 func AVBinLocation() (string, error) {
 	c, err := ConfigDir()
 	if err != nil {

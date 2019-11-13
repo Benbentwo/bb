@@ -2,8 +2,8 @@ package util
 
 import (
 	"bufio"
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/avutils"
+	"github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -65,7 +65,7 @@ var (
 
 	util_generate_function_example = templates.Examples(`
 		# Utility to search a file for a string
-		av util generate function util util_generate_function
+		bb util generate function util util_generate_function
 
 		# Don't ask questions - run in batch mode
 	`)
@@ -108,7 +108,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	if isBase {
 		log.Info("Base Commands should be one word then the .go extension")
 		log.Info("There should not be more than one base in a folder")
-		log.Info("	this allows us to run `av <some base> <some other base>` and see a list of commands added to that other base.")
+		log.Info("	this allows us to run `bb <some base> <some other base>` and see a list of commands added to that other base.")
 		log.Info("	which will create command structure similar to the commands.", nil)
 	}
 	if o.Folder == "" {
@@ -224,7 +224,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	log.Var("PICKED BASE", pickedBase)
 
 	// Time to determine what type of line we're adding, as its different in cmd.go (the main cmd)
-	//   which is found by running just `av` - it shows groups
+	//   which is found by running just `bb` - it shows groups
 	//   vs anything else in which case we just add the New Cmd string.
 	// Must match Template of generated function
 	if isBase {

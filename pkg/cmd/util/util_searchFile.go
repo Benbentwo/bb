@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
+	"github.com/Benbentwo/bb/pkg/avutils"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/log"
 	"github.com/jenkins-x/jx/pkg/util"
@@ -28,7 +28,7 @@ var (
 
 	util_searchfile_example = templates.Examples(`
 		# Utility to search a file for a string
-		av util search "hello world" HelloWorld.java
+		bb util search "hello world" HelloWorld.java
 	`)
 )
 

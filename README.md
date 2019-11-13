@@ -1,6 +1,6 @@
 ## Project Summary
 
-Go based project for utilties inside ablevets.
+Go based project for developer utilties.
 
 
 ## Building
@@ -24,4 +24,4 @@ and running `gvm install go1.12.4`
 
 #### adding a command to a base:
 
-![Animated Gif](./docs/AvBinaryGenCode.gif)
+![Animated Gif](docs/BensBinaryGenCode.gif)

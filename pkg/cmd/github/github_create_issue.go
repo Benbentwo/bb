@@ -1,7 +1,7 @@
 package github
 
 import (
-    "github.ablevets.com/Digital-Transformation/av/pkg/log"
+    "github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -21,7 +21,7 @@ Creates a github issue
 `)
 
 	github_github_create_issue_example = templates.Examples(`
-av github create issue
+bb github create issue
 `)
 )
 

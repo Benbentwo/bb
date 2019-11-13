@@ -11,7 +11,7 @@ An example application built with [cobra](https://github.com/spf13/cobra)
 
 2. Initialize cobra-example application
     
-    `$GOPATH/bin/cobra init github.ablevets.com/benjamin-smith/av`
+    `$GOPATH/bin/cobra init github.com/Benbentwo/bb`
 
 3. Add `hello` and `bye` sub commands to our example app
     

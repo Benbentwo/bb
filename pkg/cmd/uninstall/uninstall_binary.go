@@ -16,13 +16,13 @@ type UninstallBinaryOptions struct {
 
 var (
 	uninstall_binary_long = templates.LongDesc(`
-		Uninstalls the AV binary from your machine
+		Uninstalls the bb binary from your machine
 
 `)
 
 	uninstall_binary_example = templates.Examples(`
 		# Uninstall the binary
-		av uninstall binary
+		bb uninstall binary
 	`)
 )
 

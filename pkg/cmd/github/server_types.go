@@ -1,7 +1,7 @@
 package github
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/log"
 )
 
 const (
