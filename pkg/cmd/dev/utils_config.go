@@ -32,27 +32,18 @@ type FileAuthConfigSaver struct {
 }
 
 type AuthConfig struct {
-	Servers []*AuthServer `json:"servers"`
+	Servers []*GitAuth `json:"servers"`
 
 	DefaultUsername string `json:"defaultusername"`
 	CurrentServer   string `json:"currentserver"`
 }
 
-type AuthServer struct {
-	URL   string      `json:"url"`
-	Users []*UserAuth `json:"users"`
-	Name  string      `json:"name"`
-	Kind  string      `json:"kind"`
-
-	CurrentUser string `json:"currentuser"`
-}
-
-type UserAuth struct {
-	Username    string `json:"username"`
-	ApiToken    string `json:"apitoken"`
-	BearerToken string `json:"bearertoken"`
-	Password    string `json:"password,omitempty"`
-}
+// type UserAuth struct {
+// 	Username    string `json:"username"`
+// 	ApiToken    string `json:"apitoken"`
+// 	BearerToken string `json:"bearertoken"`
+// 	Password    string `json:"password,omitempty"`
+// }
 type IOFileHandles struct {
 	Err io.Writer
 	In  FileReader
@@ -72,7 +63,7 @@ type GitAuth struct {
 	GitServer GitServer `json:"gitserver"`
 }
 
-func (s *FileAuthConfigSaver) SaveConfig(config *GitAuth) error {
+func (s *FileAuthConfigSaver) SaveConfig(config *AuthConfig) error {
 	fileName := s.FileName
 	if fileName == "" {
 		return fmt.Errorf("no filename defined")
@@ -108,7 +99,12 @@ func PickValue(message string, defaultValue string, required bool, help string, 
 		validator = nil
 	}
 	surveyOpts := survey.WithStdio(handles.In, handles.Out, handles.Err)
-	err := survey.AskOne(prompt, &answer, validator, surveyOpts)
+	var err error
+	if required {
+		err = survey.AskOne(prompt, &answer, validator, surveyOpts)
+	} else {
+		err = survey.AskOne(prompt, &answer, nil, surveyOpts)
+	}
 	if err != nil {
 		return "", err
 	}
@@ -128,4 +124,27 @@ func PickPasswordNotReq(message string, required bool, help string, in terminal.
 		return "", err
 	}
 	return strings.TrimSpace(answer), nil
+}
+
+// LoadConfig loads the configuration from the users JX config directory
+func (s *FileAuthConfigSaver) LoadConfig() (*AuthConfig, error) {
+	config := &AuthConfig{}
+	fileName := s.FileName
+	if fileName != "" {
+		exists, err := util.FileExists(fileName)
+		if err != nil {
+			return config, fmt.Errorf("Could not check if file exists %s due to %s", fileName, err)
+		}
+		if exists {
+			data, err := ioutil.ReadFile(fileName)
+			if err != nil {
+				return config, fmt.Errorf("Failed to load file %s due to %s", fileName, err)
+			}
+			err = yaml.Unmarshal(data, config)
+			if err != nil {
+				return config, fmt.Errorf("Failed to unmarshal YAML file %s due to %s", fileName, err)
+			}
+		}
+	}
+	return config, nil
 }

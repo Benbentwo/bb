@@ -152,11 +152,17 @@ func (o *ProfileCreateOptions) Run() error {
 	fileAuthConfigSaver := FileAuthConfigSaver{
 		FileName: totalPath,
 	}
+
+	authConfig, err := fileAuthConfigSaver.LoadConfig()
+	if err != nil {
+		return err
+	}
 	log.Logger().Infof("Total Path save: %s", fileAuthConfigSaver.FileName)
 	gitAuth := o.CreateGitAuth()
 	log.Logger().Infof("GitAuth: %s", gitAuth)
 
-	err = fileAuthConfigSaver.SaveConfig(&gitAuth)
+	authConfig.Servers = append(authConfig.Servers, &gitAuth)
+	err = fileAuthConfigSaver.SaveConfig(authConfig)
 	utils.Check(err)
 
 	return nil
