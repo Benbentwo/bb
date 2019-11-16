@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/Benbentwo/bb/pkg/cmd/dev"
 	"github.com/Benbentwo/bb/pkg/cmd/github"
 	initialize "github.com/Benbentwo/bb/pkg/cmd/init"
 	jenkins "github.com/Benbentwo/bb/pkg/cmd/jenkins"
@@ -80,6 +81,14 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			Message: "Github Tools",
 			Commands: []*cobra.Command{
 				github.NewCmdGh(commonOpts),
+			},
+		},
+
+		// TODO remove this section and put it in the GH binary, putting it here to compile while I do not have internet
+		{
+			Message: "Dev Should go into GH binary",
+			Commands: []*cobra.Command{
+				dev.NewCmdDev(commonOpts),
 			},
 		},
 	}
