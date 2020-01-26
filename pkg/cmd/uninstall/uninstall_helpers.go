@@ -19,7 +19,7 @@ func UninstallAll() error {
 	return nil
 }
 func UninstallConfig() error {
-	err := os.RemoveAll(avutils.HomeReplace("~/.bb"))
+	err := os.RemoveAll(utilities.HomeReplace("~/.bb"))
 	if err != nil {
 		return errors.Errorf("Couldn't delete ~/.bb directory")
 	}
@@ -31,7 +31,7 @@ func UninstallBinary() error {
 	if err != nil {
 		return errors.Errorf("Couldn't delete Binary at %s", dir)
 	}
-	err = os.Remove(dir+"/bb")
+	err = os.Remove(dir + "/bb")
 	if err != nil {
 		return errors.Errorf("Couldn't delete Binary at %s", dir)
 	}
@@ -39,12 +39,12 @@ func UninstallBinary() error {
 }
 
 //TODO finish implementing
-func UnsetAVHome() error {
+func UnsetBBHome() error {
 	line := 0
 	for line != -1 {
-		_, checkLine, err :=avutils.DoesFileContainString("export BB_HOME=~/.bb", "~/.bash_profile")
+		_, checkLine, err := utilities.DoesFileContainString("export BB_HOME=~/.bb", "~/.bash_profile")
 		if err != nil {
-			return errors.Wrapf(err,"Something went wrong reading the bash profile")
+			return errors.Wrapf(err, "Something went wrong reading the bash profile")
 		}
 		line = checkLine
 		// remove the line

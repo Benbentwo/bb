@@ -1,8 +1,9 @@
 package utilities
 
 import (
+	"github.com/Benbentwo/bb/pkg/cmd/errors"
+	"github.com/Benbentwo/bb/pkg/log"
 	"io/ioutil"
-	"github.com/benbentwo/bb/pkg/log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -65,7 +66,7 @@ func BBBinLocation() (string, error) {
 
 // JXBinaryLocation Returns the path to the currently installed JX binary.
 func BBBinaryLocation() (string, error) {
-	return BBBinaryLocation(os.Executable)
+	return BbBinaryLocation(os.Executable)
 }
 
 func BbBinaryLocation(osExecutable func() (string, error)) (string, error) {
@@ -118,7 +119,7 @@ func ListSubDirectoriesRecusively(inputDir string) []string {
 	var splice = make([]string, 0)
 	e := filepath.Walk(inputDir, func(path string, info os.FileInfo, err error) error {
 		// log.Debug("Walking Path: %s", path)
-		if err == nil && info.IsDir(){
+		if err == nil && info.IsDir() {
 			splice = append(splice, path)
 		}
 		return nil
@@ -128,7 +129,7 @@ func ListSubDirectoriesRecusively(inputDir string) []string {
 }
 
 func ListFilesInDir(inputDir string) []string {
-	inputDir = HomeReplace(inputDir) //replace ~
+	inputDir = HomeReplace(inputDir)       //replace ~
 	files, err := ioutil.ReadDir(inputDir) //get an array of file objects
 	if err != nil {
 		log.Logger().Errorf("Couldn't list files in %s", inputDir)
@@ -144,7 +145,7 @@ func ListFilesInDir(inputDir string) []string {
 	return splice
 }
 func ListFilesInDirFilter(inputDir string, filter string) []string {
-	inputDir = HomeReplace(inputDir) //replace ~
+	inputDir = HomeReplace(inputDir)       //replace ~
 	files, err := ioutil.ReadDir(inputDir) //get an array of file objects
 	if err != nil {
 		log.Logger().Errorf("Couldn't list files in %s", inputDir)
@@ -156,7 +157,7 @@ func ListFilesInDirFilter(inputDir string, filter string) []string {
 		if err != nil {
 			return nil
 		}
-		if !f.IsDir() && matched{
+		if !f.IsDir() && matched {
 			log.Logger().Debugln(f.Name())
 			splice = append(splice, f.Name())
 		}
@@ -167,4 +168,3 @@ func ListFilesInDirFilter(inputDir string, filter string) []string {
 func HomeReplace(input string) string {
 	return strings.NewReplacer("~", os.Getenv("HOME")).Replace(input)
 }
-

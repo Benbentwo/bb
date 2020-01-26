@@ -55,7 +55,6 @@ func NewAuthConfigService(saver ConfigSaver) *AuthConfigService {
 	return &AuthConfigService{saver: saver}
 }
 
-
 // NewFileAuthConfigService
 func NewFileAuthConfigService(filename string) (ConfigService, error) {
 	saver, err := newFileAuthSaver(filename)
@@ -69,7 +68,7 @@ func newFileAuthSaver(fileName string) (ConfigSaver, error) {
 	svc := &FileAuthConfigSaver{}
 	// If the fileName is an absolute path, use that. Otherwise treat it as a config filename to be used in
 	if fileName == filepath.Base(fileName) {
-		dir, err := avutils.ConfigDir()
+		dir, err := utilities.ConfigDir()
 		if err != nil {
 			return svc, err
 		}

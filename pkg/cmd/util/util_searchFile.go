@@ -16,8 +16,8 @@ import (
 type UtilSearchFileOptions struct {
 	UtilOptions
 
-	SearchString		string
-	SearchFile			string
+	SearchString string
+	SearchFile   string
 }
 
 var (
@@ -65,10 +65,10 @@ func (o *UtilSearchFileOptions) Run() error {
 	if o.SearchString == "" {
 		return util.MissingOption("search-string")
 	}
-	o.SearchFile = avutils.HomeReplace(o.SearchFile)
-	count, err := avutils.FindMatchesInFile(o.SearchString, o.SearchFile)
+	o.SearchFile = utilities.HomeReplace(o.SearchFile)
+	count, err := utilities.FindMatchesInFile(o.SearchString, o.SearchFile)
 	if err != nil {
-		return errors.Wrapf(err,"Could not search the file %s for the string %s.", o.SearchFile, o.SearchString)
+		return errors.Wrapf(err, "Could not search the file %s for the string %s.", o.SearchFile, o.SearchString)
 	}
 	log.Logger().Infof("Found %d instances of `%s` in the file `%s`", len(count), o.SearchString, o.SearchFile)
 	if len(count) > 0 {
