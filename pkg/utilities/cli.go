@@ -1,4 +1,4 @@
-package avutils
+package utilities
 
 import (
 	"github.com/AlecAivazis/survey/v2/terminal"

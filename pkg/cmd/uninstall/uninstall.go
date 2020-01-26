@@ -33,15 +33,15 @@ var (
 
 	get_example = templates.Examples(`
 		# uninstall the binary
-			av uninstall binary
+			bb uninstall binary
 
 		# Uninstall your current config **Cannot be undone**
-			av uninstall config
+			bb uninstall config
 
 		# Uninstall EVERYTHING
-			av uninstall -a
+			bb uninstall -a
 			# or
-			av uninstall --all
+			bb uninstall --all
 	`)
 )
 

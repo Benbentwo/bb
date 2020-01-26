@@ -16,16 +16,16 @@ type UninstallConfigOptions struct {
 
 var (
 	uninstall_config_long = templates.LongDesc(`
-		Wipes the AV Binary's configuration from your machine,
+		Wipes the BB Binary's configuration from your machine,
 		this allows you to reconfigure it with new settings.
 
-		essentially runs "rm -rf ~/.av"
+		essentially runs "rm -rf ~/.bb"
 
 `)
 
 	uninstall_config_example = templates.Examples(`
 		# Uninstall the configuration
-		av uninstall config
+		bb uninstall config
 	`)
 )
 

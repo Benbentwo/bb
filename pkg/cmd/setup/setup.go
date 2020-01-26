@@ -2,7 +2,7 @@
 package setup
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -23,7 +23,7 @@ Base command for which other setup files will be added to
 `)
 
 	setup_setup_example = templates.Examples(`
-av setup --help`)
+bb setup --help`)
 )
 
 func NewCmdSetup(commonOpts *opts.CommonOptions) *cobra.Command {

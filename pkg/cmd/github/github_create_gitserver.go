@@ -1,8 +1,8 @@
 package github
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
-	Err "github.ablevets.com/Digital-Transformation/av/pkg/cmd/errors"
+	"github.com/Benbentwo/bb/pkg/log"
+	Err "github.com/Benbentwo/bb/pkg/cmd/errors"
 	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
@@ -23,11 +23,11 @@ type CreateGitServerOptions struct {
 
 var (
 	github_github_create_gitserver_long = templates.LongDesc(`
-Adds a git server object to your ~/.av/gitAuth.yaml configuration. You can add different users to each git server. A git server is like github.com or github.ablevets.com, there is also bitbucket support
+Adds a git server object to your ~/.bb/gitAuth.yaml configuration. You can add different users to each git server. A git server is like github.com or github.com, there is also bitbucket support
 `)
 
 	github_github_create_gitserver_example = templates.Examples(`
-av gh create git-server
+bb gh create git-server
 `)
 )
 

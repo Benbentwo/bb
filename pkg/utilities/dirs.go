@@ -1,9 +1,8 @@
-package avutils
+package utilities
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/errors"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
 	"io/ioutil"
+	"github.com/benbentwo/bb/pkg/log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -25,14 +24,14 @@ func HomeDir() string {
 	return h
 }
 
-// Checks fi the AV_HOME variable is set, if it isn't it makes it in the default directory
+// Checks fi the BB_HOME variable is set, if it isn't it makes it in the default directory
 func ConfigDir() (string, error) {
-	path := os.Getenv("AV_HOME")
+	path := os.Getenv("BB_HOME")
 	if path != "" {
 		return path, nil
 	}
 	h := HomeDir()
-	path = filepath.Join(h, ".av")
+	path = filepath.Join(h, ".bb")
 	err := os.MkdirAll(path, DefaultWritePermissions)
 	if err != nil {
 		return "", err
@@ -50,8 +49,8 @@ func KubeConfigFile() string {
 	return filepath.Join(h, ".kube", "config")
 }
 
-// JXBinLocation finds the AV config directory and creates a bin directory inside it if it does not already exist. Returns the AV bin path
-func AVBinLocation() (string, error) {
+// JXBinLocation finds the BB config directory and creates a bin directory inside it if it does not already exist. Returns the BB bin path
+func BBBinLocation() (string, error) {
 	c, err := ConfigDir()
 	if err != nil {
 		return "", err
@@ -65,35 +64,35 @@ func AVBinLocation() (string, error) {
 }
 
 // JXBinaryLocation Returns the path to the currently installed JX binary.
-func AVBinaryLocation() (string, error) {
-	return AvBinaryLocation(os.Executable)
+func BBBinaryLocation() (string, error) {
+	return BBBinaryLocation(os.Executable)
 }
 
-func AvBinaryLocation(osExecutable func() (string, error)) (string, error) {
-	avProcessBinary, err := osExecutable()
+func BbBinaryLocation(osExecutable func() (string, error)) (string, error) {
+	bbProcessBinary, err := osExecutable()
 	if err != nil {
-		log.Logger().Debugf("avProcessBinary error %s", err)
-		return avProcessBinary, err
+		log.Logger().Debugf("bbProcessBinary error %s", err)
+		return bbProcessBinary, err
 	}
-	log.Logger().Debugf("avProcessBinary %s", avProcessBinary)
+	log.Logger().Debugf("bbProcessBinary %s", bbProcessBinary)
 	// make it absolute
-	avProcessBinary, err = filepath.Abs(avProcessBinary)
+	bbProcessBinary, err = filepath.Abs(bbProcessBinary)
 	if err != nil {
-		log.Logger().Debugf("avProcessBinary error %s", err)
-		return avProcessBinary, err
+		log.Logger().Debugf("bbProcessBinary error %s", err)
+		return bbProcessBinary, err
 	}
-	log.Logger().Debugf("avProcessBinary %s", avProcessBinary)
+	log.Logger().Debugf("bbProcessBinary %s", bbProcessBinary)
 
 	// if the process was started form a symlink go and get the absolute location.
-	avProcessBinary, err = filepath.EvalSymlinks(avProcessBinary)
+	bbProcessBinary, err = filepath.EvalSymlinks(bbProcessBinary)
 	if err != nil {
-		log.Logger().Debugf("avProcessBinary error %s", err)
-		return avProcessBinary, err
+		log.Logger().Debugf("bbProcessBinary error %s", err)
+		return bbProcessBinary, err
 	}
 
-	log.Logger().Debugf("avProcessBinary %s", avProcessBinary)
-	path := filepath.Dir(avProcessBinary)
-	log.Logger().Debugf("dir from '%s' is '%s'", avProcessBinary, path)
+	log.Logger().Debugf("bbProcessBinary %s", bbProcessBinary)
+	path := filepath.Dir(bbProcessBinary)
+	log.Logger().Debugf("dir from '%s' is '%s'", bbProcessBinary, path)
 	return path, nil
 }
 func ListSubDirectories(inputDir string) []string {

@@ -1,7 +1,7 @@
 package github
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
+	"github.com/Benbentwo/bb/pkg/utilities"
 	"path/filepath"
 	"strings"
 )

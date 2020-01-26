@@ -18,19 +18,19 @@
 rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 SHELL := /bin/bash
-NAME := av
+NAME := bb
 BUILD_TARGET = build
-MAIN_SRC_FILE=cmd/av/av.go
+MAIN_SRC_FILE=cmd/bb/bb.go
 GO := GO111MODULE=on go
 GO_NOMOD :=GO111MODULE=off go
 REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
 REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
-ORG := Digital-Transformation
+ORG := Benbentwo
 ORG_REPO := $(ORG)/$(NAME)
 RELEASE_ORG_REPO := $(ORG_REPO)
-ROOT_PACKAGE := github.ablevets.com/$(ORG_REPO)
+ROOT_PACKAGE := github.com/$(ORG_REPO)
 GO_VERSION := $(shell $(GO) version | sed -e 's/^[^0-9.]*\([0-9.]*\).*/\1/')
-GO_DEPENDENCIES := $(call rwildcard,pkg/,*.go) $(call rwildcard,cmd/av/,*.go)
+GO_DEPENDENCIES := $(call rwildcard,pkg/,*.go) $(call rwildcard,cmd/bb/,*.go)
 
 BRANCH     := $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
 BUILD_DATE := $(shell date +%Y%m%d-%H:%M:%S)
@@ -72,9 +72,9 @@ ifdef DISABLE_TEST_CACHING
 GOTEST += -count=1
 endif
 
-# support for building a covered av binary (one with the coverage instrumentation compiled in). The `build-covered`
+# support for building a covered bb binary (one with the coverage instrumentation compiled in). The `build-covered`
 # target also builds the covered binary explicitly
-COVERED_MAIN_SRC_FILE=./cmd/av
+COVERED_MAIN_SRC_FILE=./cmd/bb
 COVERAGE_BUILDFLAGS = -c -tags covered_binary -coverpkg=./... -covermode=count
 COVERAGE_BUILD_TARGET = test
 ifdef COVERED_BINARY
@@ -109,7 +109,7 @@ print-version: ## Print version
 	@echo $(VERSION)
 
 .PHONY: build
-build: $(GO_DEPENDENCIES) ## Build av binary for current OS
+build: $(GO_DEPENDENCIES) ## Build bb binary for current OS
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) $(BUILD_TARGET) $(BUILDFLAGS) -o build/$(NAME) $(MAIN_SRC_FILE)
 	chmod -R +x ./build
 
@@ -117,7 +117,7 @@ build-all: $(GO_DEPENDENCIES) build make-reports-dir ## Build all files - runtim
 	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -run=nope -tags=integration -failfast -short ./...
 
 .PHONY: build-covered
-build-covered: $(GO_DEPENDENCIES) ## Build av binary for current OS with coverage instrumentation to build/$(NAME).covered
+build-covered: $(GO_DEPENDENCIES) ## Build bb binary for current OS with coverage instrumentation to build/$(NAME).covered
 	CGO_ENABLED=$(CGO_ENABLED) $(GO) $(COVERAGE_BUILD_TARGET) $(BUILDFLAGS) $(COVERAGE_BUILDFLAGS) -o build/$(NAME).covered $(COVERED_MAIN_SRC_FILE)
 
 tidy-deps: ## Cleans up dependencies
@@ -187,22 +187,22 @@ test1-pkg: get-test-deps make-reports-dir ## Runs single test specified by path 
 	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) $(PKG) -test.v $(TEST)
 
 testbin: get-test-deps make-reports-dir
-	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -c github.ablevets.com/Digital-Transformation/av/pkg/cmd -o build/av-test
+	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -c github.com/Benbentwo/bb/pkg/cmd -o build/bb-test
 
 #testbin-gits: get-test-deps make-reports-dir
-#	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -c github.ablevets.com/Digital-Transformation/av/pkg/gits -o build/av-test-gits
+#	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -c github.com/Benbentwo/bb/pkg/gits -o build/bb-test-gits
 
 debugtest1: testbin
-	cd pkg/av/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/av-test -- -test.run $(TEST)
+	cd pkg/bb/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/bb-test -- -test.run $(TEST)
 
 debugtest1gits: testbin-gits
-	cd pkg/gits && dlv --log --listen=:2345 --headless=true --api-version=2 exec ../../build/av-test-gits -- -test.run $(TEST)
+	cd pkg/gits && dlv --log --listen=:2345 --headless=true --api-version=2 exec ../../build/bb-test-gits -- -test.run $(TEST)
 
 inttestbin: get-test-deps
-	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -tags=integration -c github.ablevets.com/Digital-Transformation/av/pkg/cmd -o build/av-inttest
+	CGO_ENABLED=$(CGO_ENABLED) $(GOTEST) -tags=integration -c github.com/Benbentwo/bb/pkg/cmd -o build/bb-inttest
 
 debuginttest1: inttestbin
-	cd pkg/av/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/av-inttest -- -test.run $(TEST)
+	cd pkg/bb/cmd && dlv --listen=:2345 --headless=true --api-version=2 exec ../../../build/bb-inttest -- -test.run $(TEST)
 
 install: $(GO_DEPENDENCIES) ## Install the binary
 	GOBIN=${GOPATH}/bin $(GO) install $(BUILDFLAGS) $(MAIN_SRC_FILE)
@@ -235,7 +235,7 @@ release: clean build test-slow-integration linux # Release the binary
 	git fetch origin refs/tags/v$(VERSION)
 	# Don't create a changelog for the distro
 	@if [[ -z "${DISTRO}" ]]; then \
-		./build/linux/av step changelog --verbose --header-file=docs/dev/changelog-header.md --version=$(VERSION) --rev=$(PULL_BASE_SHA) --output-markdown=changelog.md --update-release=false; \
+		./build/linux/bb step changelog --verbose --header-file=docs/dev/changelog-header.md --version=$(VERSION) --rev=$(PULL_BASE_SHA) --output-markdown=changelog.md --update-release=false; \
 		GITHUB_TOKEN=$(GITHUB_ACCESS_TOKEN) REV=$(REV) BRANCH=$(BRANCH) BUILDDATE=$(BUILD_DATE) GOVERSION=$(GO_VERSION) ROOTPACKAGE=$(ROOT_PACKAGE) VERSION=$(VERSION) goreleaser release --config=.goreleaser.yml --rm-dist --release-notes=./changelog.md --skip-validate; \
 	else \
 		GITHUB_TOKEN=$(GITHUB_ACCESS_TOKEN) REV=$(REV) BRANCH=$(BRANCH) BUILDDATE=$(BUILD_DATE) GOVERSION=$(GO_VERSION) ROOTPACKAGE=$(ROOT_PACKAGE) VERSION=$(VERSION) goreleaser release --config=.goreleaser.yml --rm-dist; \

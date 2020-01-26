@@ -217,7 +217,7 @@ func removeArgs(args *[]interface{}) bool {
 	}
 	return false
 }
-// Helper functions so you can import AV log and just say log.Debug("some string %s", stringVar)
+// Helper functions so you can import BB log and just say log.Debug("some string %s", stringVar)
 func Var(variable string, value ...interface{}) {
 	Logger().Debugf("VAR %s: %s", variable, value)
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.ablevets.com/Digital-Transformation/av/cmd/av/app"
+	"github.com/Benbentwo/bb/cmd/bb/app"
 )
 
 // Entrypoint for jx command

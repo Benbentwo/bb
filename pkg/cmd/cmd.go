@@ -1,13 +1,13 @@
 package cmd
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/github"
-	initialize "github.ablevets.com/Digital-Transformation/av/pkg/cmd/init"
-	jenkins "github.ablevets.com/Digital-Transformation/av/pkg/cmd/jenkins"
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/setup"
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/uninstall"
-	"github.ablevets.com/Digital-Transformation/av/pkg/cmd/util"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/cmd/github"
+	initialize "github.com/Benbentwo/bb/pkg/cmd/init"
+	jenkins "github.com/Benbentwo/bb/pkg/cmd/jenkins"
+	"github.com/Benbentwo/bb/pkg/cmd/setup"
+	"github.com/Benbentwo/bb/pkg/cmd/uninstall"
+	"github.com/Benbentwo/bb/pkg/cmd/util"
+	"github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -25,8 +25,8 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 	replacer := strings.NewReplacer("-", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	baseCommand := &cobra.Command{
-		Use:              "av",
-		Short:            "AV CLI tool and utility",
+		Use:              "bb",
+		Short:            "BB CLI tool and utility",
 		PersistentPreRun: setLoggingLevel,
 		Run:              runHelp,
 	}
@@ -47,19 +47,19 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 	groups := templates.CommandGroups{
 		// Section to add commands to:
 		{
-			Message: "Installing and initializing AV:",
+			Message: "Installing and initializing BB:",
 			Commands: []*cobra.Command{
 				initialize.NewCmdInit(commonOpts),
 			},
 		},
 		{
-			Message: "Uninstalling AV:",
+			Message: "Uninstalling BB:",
 			Commands: []*cobra.Command{
 				uninstall.NewCmdUninstall(commonOpts),
 			},
 		},
 		{
-			Message: "AV Utility Functions:",
+			Message: "BB Utility Functions:",
 			Commands: []*cobra.Command{
 				util.NewCmdUtil(commonOpts),
 			},

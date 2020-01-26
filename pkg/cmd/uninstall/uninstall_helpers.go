@@ -1,7 +1,7 @@
 package uninstall
 
 import (
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
+	"github.com/Benbentwo/bb/pkg/utilities"
 	"github.com/pkg/errors"
 	"os"
 	"path/filepath"
@@ -19,9 +19,9 @@ func UninstallAll() error {
 	return nil
 }
 func UninstallConfig() error {
-	err := os.RemoveAll(avutils.HomeReplace("~/.av"))
+	err := os.RemoveAll(avutils.HomeReplace("~/.bb"))
 	if err != nil {
-		return errors.Errorf("Couldn't delete ~/.av directory")
+		return errors.Errorf("Couldn't delete ~/.bb directory")
 	}
 	return nil
 }
@@ -31,7 +31,7 @@ func UninstallBinary() error {
 	if err != nil {
 		return errors.Errorf("Couldn't delete Binary at %s", dir)
 	}
-	err = os.Remove(dir+"/av")
+	err = os.Remove(dir+"/bb")
 	if err != nil {
 		return errors.Errorf("Couldn't delete Binary at %s", dir)
 	}
@@ -42,7 +42,7 @@ func UninstallBinary() error {
 func UnsetAVHome() error {
 	line := 0
 	for line != -1 {
-		_, checkLine, err :=avutils.DoesFileContainString("export AV_HOME=~/.av", "~/.bash_profile")
+		_, checkLine, err :=avutils.DoesFileContainString("export BB_HOME=~/.bb", "~/.bash_profile")
 		if err != nil {
 			return errors.Wrapf(err,"Something went wrong reading the bash profile")
 		}

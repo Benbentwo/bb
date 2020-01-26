@@ -1,4 +1,4 @@
-package avutils
+package utilities
 
 import (
 	"bufio"

@@ -2,8 +2,8 @@ package util
 
 import (
 	"bufio"
-	"github.ablevets.com/Digital-Transformation/av/pkg/avutils"
-	"github.ablevets.com/Digital-Transformation/av/pkg/log"
+	"github.com/Benbentwo/bb/pkg/utilities"
+	"github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -65,7 +65,7 @@ var (
 
 	util_generate_function_example = templates.Examples(`
 		# Utility to search a file for a string
-		av util generate function util util_generate_function
+		bb util generate function util util_generate_function
 
 		# Don't ask questions - run in batch mode
 	`)
@@ -101,23 +101,23 @@ func NewCmdUtilityGenerateFunction(commonOpts *opts.CommonOptions) *cobra.Comman
 // Run implements this command
 func (o *UtilGenerateFunctionOptions) Run() error {
 	var err error
-	o.TemplateFile, err = avutils.Pick(o.CommonOptions, "What template would you like to use?", avutils.ListFilesInDirFilter("./templates",`(.*\.txt)`), "template_command.txt")
+	o.TemplateFile, err = utilities.Pick(o.CommonOptions, "What template would you like to use?", utilities.ListFilesInDirFilter("./templates",`(.*\.txt)`), "template_command.txt")
 	check(err)
 
 	var isBase = o.TemplateFile == BASE_COMMAND_TEMPLATE
 	if isBase {
 		log.Info("Base Commands should be one word then the .go extension")
 		log.Info("There should not be more than one base in a folder")
-		log.Info("	this allows us to run `av <some base> <some other base>` and see a list of commands added to that other base.")
+		log.Info("	this allows us to run `bb <some base> <some other base>` and see a list of commands added to that other base.")
 		log.Info("	which will create command structure similar to the commands.", nil)
 	}
 	if o.Folder == "" {
 		// o.Folder, err = util.PickValue("What Folder would you like to put this in", "",true, "Folder inside of cmd of this project root", o.In, o.Out, o.Err)
 		log.Info("What Folder would you like this in? starts in ./pkg/cmd/<your-answer>", nil)
 		log.Info("You can create new ones, and subdirectories ./pkg/cmd/a/b", nil)
-		// o.Folder, err = avutils.Pick(o.CommonOptions, "What Folder would you like this in (starting from pkg/cmd/...? you can create new directories", avutils.ListSubDirectories("./pkg/cmd/"), "dev")
+		// o.Folder, err = utilities.Pick(o.CommonOptions, "What Folder would you like this in (starting from pkg/cmd/...? you can create new directories", utilities.ListSubDirectories("./pkg/cmd/"), "dev")
 
-		o.Folder, err = avutils.Pick(o.CommonOptions, "What Folder would you like this in?", avutils.ListSubDirectoriesRecusively("./pkg/cmd/"), "dev")
+		o.Folder, err = utilities.Pick(o.CommonOptions, "What Folder would you like this in?", utilities.ListSubDirectoriesRecusively("./pkg/cmd/"), "dev")
 		if err != nil {
 			return err
 		}
@@ -129,7 +129,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	var originalFilename = ""
 	if o.Filename == "" {
 		if isBase {
-			o.Filename, err = avutils.PickValueFromPath("What would you like to call the file", o.Folder,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
+			o.Filename, err = utilities.PickValueFromPath("What would you like to call the file", o.Folder,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 		} else {
 			o.Filename, err = util.PickValue("What would you like to call the file", "",true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 			originalFilename = o.Filename
@@ -219,12 +219,12 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 
 	log.Debug("BASES: %s", bases)
 	var pickedBase = ""
-	pickedBase, err = avutils.Pick(o.CommonOptions, "What base file would you like to use?", bases, "")
+	pickedBase, err = utilities.Pick(o.CommonOptions, "What base file would you like to use?", bases, "")
 	check(err)
 	log.Var("PICKED BASE", pickedBase)
 
 	// Time to determine what type of line we're adding, as its different in cmd.go (the main cmd)
-	//   which is found by running just `av` - it shows groups
+	//   which is found by running just `bb` - it shows groups
 	//   vs anything else in which case we just add the New Cmd string.
 	// Must match Template of generated function
 	if isBase {
@@ -263,7 +263,7 @@ func FindBaseCommands(path string) ([]string, error) {
 }
 
 func FindLineToInsertCommandTo(path string, search string) (int, error) {
-	arr, err := avutils.FindMatchesInFile(search, path)
+	arr, err := utilities.FindMatchesInFile(search, path)
 	check(err)
 	if len(arr) == 0 {
 		return -1, log.Fatal("No String `%s` found in file `%s`, Error: %s", err, search, path, err)

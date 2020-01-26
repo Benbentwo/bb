@@ -2,7 +2,7 @@
 package setup
 
 import (
-    "github.ablevets.com/Digital-Transformation/av/pkg/log"
+    "github.com/Benbentwo/bb/pkg/log"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -23,7 +23,7 @@ A series of questions designed for seting up a profile, specifically git
 `)
 
 	setup_setup_github_profile_example = templates.Examples(`
-av setup git
+bb setup git
 `)
 )
 
