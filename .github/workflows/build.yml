@@ -42,8 +42,13 @@ jobs:
           make darwin
 
 
-      - name: Archive artifacts
+      - name: Archive mac
         uses: actions/upload-artifact@v1
         with:
           name: mac-bb
           path: build/darwin/bb
+      - name: Archive linux
+        uses: actions/upload-artifact@v1
+        with:
+          name: linux-bb
+          path: build/linux/bb
