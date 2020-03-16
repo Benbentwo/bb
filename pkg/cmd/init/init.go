@@ -1,9 +1,9 @@
 package init
 
 import (
-	"github.com/Benbentwo/bb/pkg/utilities"
 	"github.com/Benbentwo/bb/pkg/cmd/github"
 	"github.com/Benbentwo/bb/pkg/log"
+	"github.com/Benbentwo/bb/pkg/utilities"
 	_ "github.com/jenkins-x/jx/pkg/auth"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
@@ -20,17 +20,19 @@ import (
 )
 
 const (
-	BB_HOME_VAR = "BB_HOME"
+	BB_HOME_VAR   = "BB_HOME"
 	BB_CONFIG_DIR = "~/.bb"
+	CONFIG        = "config.yaml"
 )
+
 type InitOptions struct {
 	*opts.CommonOptions
-	Flags	InitFlags
+	Flags InitFlags
 }
 
 type InitFlags struct {
-	ConfigDir		string
-	ProjectsDir		string
+	ConfigDir   string
+	ProjectsDir string
 }
 
 var logs = log.Logger()
@@ -50,11 +52,11 @@ func NewCmdInit(commonOpts *opts.CommonOptions) *cobra.Command {
 		CommonOptions: commonOpts,
 	}
 	cmd := &cobra.Command{
-		Use:			"init",
-		Short:			"Initializes the "+BB_CONFIG_DIR+" configuration directory",
-		Long:			initLong,
-		Example:		initExample,
-		Run:			func(cmd *cobra.Command, args []string) {
+		Use:     "init",
+		Short:   "Initializes the " + BB_CONFIG_DIR + " configuration directory",
+		Long:    initLong,
+		Example: initExample,
+		Run: func(cmd *cobra.Command, args []string) {
 			options.Cmd = cmd
 			options.Args = args
 			err := options.Run()
@@ -72,7 +74,6 @@ func check(err error) {
 }
 
 func (o *InitOptions) Run() error {
-
 
 	replacer := strings.NewReplacer("~", os.Getenv("HOME"))
 	path := replacer.Replace(BB_CONFIG_DIR)
@@ -102,45 +103,45 @@ func (o *InitOptions) Run() error {
 			return err
 		}
 
-		stringExists,line, err := utilities.DoesFileContainString("export BB_HOME=~/.bb", "~/.bash_profile")
-		if err != nil {
-			return err
-		}
-		if line != -1 {
-			logs.Debugf("Found String at line %s", line)
-		}
-		if !stringExists {
-			f, err := os.OpenFile(replacer.Replace("~/.bash_profile"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+		response := util.Confirm("Would you like to update your bash profile?", true, "Set a variable on your bash profile", o.In, o.Out, o.Err)
+		if response {
+
+			stringExists, line, err := utilities.DoesFileContainString("export BB_HOME=~/.bb", "~/.bash_profile")
 			if err != nil {
-				logs.Errorf("Couldn't open or find ~/.bash_profile")
-				panic(err)
+				return err
 			}
-
-			defer f.Close()
-			var carriage= GetCarriageReturn()
-
-			if _, err = f.WriteString("export BB_HOME=" + path + carriage); err != nil {
-				panic(err)
+			if line != -1 {
+				logs.Debugf("Found String at line %s", line)
 			}
-			log.Logger().Debugf("Updated Bash Profile to include BB_HOME")
+			if !stringExists {
+				f, err := os.OpenFile(replacer.Replace("~/.bash_profile"), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+				if err != nil {
+					logs.Errorf("Couldn't open or find ~/.bash_profile")
+					panic(err)
+				}
+
+				defer f.Close()
+				var carriage = GetCarriageReturn()
+
+				if _, err = f.WriteString("export BB_HOME=" + path + carriage); err != nil {
+					panic(err)
+				}
+				log.Logger().Debugf("Updated Bash Profile to include BB_HOME")
+			}
 		}
+
 	}
 
-
-
-	configPath := path+"/"+github.GitAuthConfigFile
-	exists, err = util.FileExists(configPath)
+	err = CreateFileIfNotFound(path + "/" + CONFIG)
 	check(err)
-	if exists {
-		log.Logger().Infof("Git yaml file found.")
-	} else {
-		_, err = os.Create(configPath)
-		check(err)
-	}
+
+	configPath := path + "/" + github.GitAuthConfigFile
+	err = CreateFileIfNotFound(configPath)
+	check(err)
 
 	// Lets setup a Git Profile
 	log.Info("Looks like you do not have any git servers configured")
-	response := util.Confirm("Would you like to set one up now?", true, "Would you like to create a connection configuraiton to a git server?", o.In, o.Out, o.Err)
+	response := util.Confirm("Would you like to set one up now?", false, "Would you like to create a connection configuraiton to a git server?", o.In, o.Out, o.Err)
 	if response {
 		SetupGitConfigFile(configPath, *o.CommonOptions)
 	}
@@ -150,33 +151,46 @@ func (o *InitOptions) Run() error {
 	return nil
 }
 
-func(o *InitOptions) AddInitFlags(cmd *cobra.Command) {
+func CreateFileIfNotFound(configPath string) error {
+	exists, err := util.FileExists(configPath)
+	check(err)
+	if exists {
+		log.Logger().Infof(configPath + " file found.")
+	} else {
+		log.Logger().Infof(configPath + " file NOT found, creating...")
+		_, err = os.Create(configPath)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+func (o *InitOptions) AddInitFlags(cmd *cobra.Command) {
 	// add flags
 	cmd.Flags().StringVarP(&o.Flags.ProjectsDir, "project-dir", "p", "~/dev", "The Directory you would like to store your Projects in")
 
 }
 
-
 // Writes a string to a file and returns whether or not it did exist
-func WriteStringIfDoesntExist(writeString string, filePath string) bool{
-	if exists, _, _ :=utilities.DoesFileContainString(writeString, filePath); !exists{
+func WriteStringIfDoesntExist(writeString string, filePath string) bool {
+	if exists, _, _ := utilities.DoesFileContainString(writeString, filePath); !exists {
 		f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 		check(err)
-		_, err =f.WriteString(writeString)
+		_, err = f.WriteString(writeString)
 		check(err)
 		return false
 	}
 	return true
 }
 
-func GetCarriageReturn() string{
+func GetCarriageReturn() string {
 	if runtime.GOOS == "windows" {
 		return "\r\n"
 	} else {
 		return "\n"
 	}
 }
-func SetupGitConfigFile(configPath string, o opts.CommonOptions){
+func SetupGitConfigFile(configPath string, o opts.CommonOptions) {
 	carriage := GetCarriageReturn()
 	WriteStringIfDoesntExist("currentserver: "+carriage, configPath)
 	WriteStringIfDoesntExist("defaultusername: "+carriage, configPath)
