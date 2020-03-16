@@ -8,18 +8,17 @@ import (
 
 // options for the command
 type JenkinsOptions struct {
-	*	opts.CommonOptions
+	*opts.CommonOptions
 }
 
-
 func NewCmdJenkins(commonOpts *opts.CommonOptions) *cobra.Command {
-	options := &JenkinsOptions {
+	options := &JenkinsOptions{
 		CommonOptions: commonOpts,
 	}
 
 	cmd := &cobra.Command{
-		Use:     "jenkins",
-		Short:   "Jenkins Utilities and base command",
+		Use:   "jenkins",
+		Short: "Jenkins Utilities and base command",
 		Run: func(cmd *cobra.Command, args []string) {
 			options.Cmd = cmd
 			options.Args = args
@@ -32,7 +31,7 @@ func NewCmdJenkins(commonOpts *opts.CommonOptions) *cobra.Command {
 	// the line above this and below can be deleted.
 	// DO NOT DELETE THE FOLLOWING LINE:
 	// Section to add commands to:
-	cmd.AddCommand(NewCmdJenkinsConnect(commonOpts))
+	cmd.AddCommand(NewCmdJenkins_connect(commonOpts))
 	return cmd
 }
 
@@ -40,7 +39,6 @@ func NewCmdJenkins(commonOpts *opts.CommonOptions) *cobra.Command {
 func (o *JenkinsOptions) Run() error {
 	return o.Cmd.Help()
 }
-
 
 func (o *JenkinsOptions) AddJenkinsFlags(cmd *cobra.Command) {
 	o.Cmd = cmd

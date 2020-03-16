@@ -1,3 +1,5 @@
+![Go](https://github.com/Benbentwo/bb/workflows/Go/badge.svg)
+
 ## Project Summary
 
 Go based project for utilties inside ablevets.

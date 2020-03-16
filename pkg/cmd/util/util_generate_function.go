@@ -2,8 +2,8 @@ package util
 
 import (
 	"bufio"
-	"github.com/Benbentwo/bb/pkg/utilities"
 	"github.com/Benbentwo/bb/pkg/log"
+	"github.com/Benbentwo/bb/pkg/utilities"
 	"github.com/jenkins-x/jx/pkg/cmd/helper"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -33,10 +33,12 @@ func check(e error) {
 		panic(e)
 	}
 }
+
 type SupportedOptions struct {
 	UtilOptions
 	opts.CommonOptions
 }
+
 // GetAddonOptions the command line options
 type UtilGenerateFunctionOptions struct {
 	UtilOptions
@@ -46,15 +48,14 @@ type UtilGenerateFunctionOptions struct {
 	Filename             string
 	TitledFolderFilename string
 
-	LongDescription  string
-	ExampleString    string
-	CommandUse       string
-	ShortDescription string
-	SupportedOptions SupportedOptions
-	ChosenOption     string
-	NoExtensionFilename	string
-	TemplateFile		string
-
+	LongDescription     string
+	ExampleString       string
+	CommandUse          string
+	ShortDescription    string
+	SupportedOptions    SupportedOptions
+	ChosenOption        string
+	NoExtensionFilename string
+	TemplateFile        string
 }
 
 var (
@@ -97,11 +98,10 @@ func NewCmdUtilityGenerateFunction(commonOpts *opts.CommonOptions) *cobra.Comman
 	return cmd
 }
 
-
 // Run implements this command
 func (o *UtilGenerateFunctionOptions) Run() error {
 	var err error
-	o.TemplateFile, err = utilities.Pick(o.CommonOptions, "What template would you like to use?", utilities.ListFilesInDirFilter("./templates",`(.*\.txt)`), "template_command.txt")
+	o.TemplateFile, err = utilities.Pick(o.CommonOptions, "What template would you like to use?", utilities.ListFilesInDirFilter("./templates", `(.*\.txt)`), "template_command.txt")
 	check(err)
 
 	var isBase = o.TemplateFile == BASE_COMMAND_TEMPLATE
@@ -124,16 +124,16 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		log.Info("Folders: %s", o.Folder)
 	}
 	var path = o.Folder
-	splitPath := strings.Split(o.Folder,"/")
-	o.Folder = splitPath[len(splitPath) -1]
+	splitPath := strings.Split(o.Folder, "/")
+	o.Folder = splitPath[len(splitPath)-1]
 	var originalFilename = ""
 	if o.Filename == "" {
 		if isBase {
-			o.Filename, err = utilities.PickValueFromPath("What would you like to call the file", o.Folder,true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
+			o.Filename, err = utilities.PickValueFromPath("What would you like to call the file", o.Folder, true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 		} else {
-			o.Filename, err = util.PickValue("What would you like to call the file", "",true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
+			o.Filename, err = util.PickValue("What would you like to call the file? (this results in *folder*_*thisFileName*)", "", true, "File name should follow the structure of foldername_filename", o.In, o.Out, o.Err)
 			originalFilename = o.Filename
-			o.TitledFolderFilename = strings.Title(o.Folder)+strings.Title(RemoveGoExtension(o.Filename))
+			o.TitledFolderFilename = strings.Title(o.Folder) + strings.Title(RemoveGoExtension(o.Filename))
 			o.Filename = strings.ToLower(o.Folder) + "_" + o.Filename
 		}
 		check(err)
@@ -141,13 +141,13 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		if !matched {
 			log.Logger().Debugln("Adding .go extension")
 			o.NoExtensionFilename = o.Filename
-			o.Filename = o.Filename+".go"
+			o.Filename = o.Filename + ".go"
 			originalFilename += ".go"
 		} else {
 			log.Logger().Debugln("Not adding .go extension")
 
 			var extension = filepath.Ext(o.Filename)
-			o.NoExtensionFilename = o.NoExtensionFilename[0:len(o.Filename)-len(extension)]
+			o.NoExtensionFilename = o.NoExtensionFilename[0 : len(o.Filename)-len(extension)]
 		}
 	}
 	var fullFilePath = util.StripTrailingSlash(path) + "/" + o.Filename
@@ -159,28 +159,28 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		}
 	}
 
-	{ 	// section for command stuff - braces help you collapse it in your IDE
+	{ // section for command stuff - braces help you collapse it in your IDE
 		fileNameStripped := RemoveGoExtension(originalFilename)
 		if isBase {
-			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped,true, "Command Use", o.In, o.Out, o.Err)
+			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped, true, "Command Use", o.In, o.Out, o.Err)
 		} else {
-			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped,true, "Command Use", o.In, o.Out, o.Err)
+			o.CommandUse, err = util.PickValue("What would you like for the command use, this should be a single word, or hyphenated", fileNameStripped, true, "Command Use", o.In, o.Out, o.Err)
 		}
 		check(err)
 
 		if !isBase {
-			o.ShortDescription, err = util.PickValue("What would you like for the short description, this should be a single word, or hyphenated", "",true, "Long Description", o.In, o.Out, o.Err)
+			o.ShortDescription, err = util.PickValue("What would you like for the short description, this should be a single word, or hyphenated", "", true, "Long Description", o.In, o.Out, o.Err)
 			check(err)
-			o.LongDescription, err = util.PickValue("What would you like for the long description", "",true, "Long Description", o.In, o.Out, o.Err)
+			o.LongDescription, err = util.PickValue("What would you like for the long description", "", true, "Long Description", o.In, o.Out, o.Err)
 			check(err)
-			o.ExampleString, err = util.PickValue("What would you like for the example command", "",true, "Example command", o.In, o.Out, o.Err)
+			o.ExampleString, err = util.PickValue("What would you like for the example command", "", true, "Example command", o.In, o.Out, o.Err)
 			check(err)
 		}
 	}
 
 	var bases = make([]string, 0) //create an empty array
 	// if isBase {
-		bases, err = FindBaseCommands("./pkg/cmd")
+	bases, err = FindBaseCommands("./pkg/cmd")
 	// }
 	// File Gen - put it down here so we don't create the file till they answer all the questions
 	// if they ctrl-c we don't want empty files cluttering our project.
@@ -191,7 +191,7 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 		}
 	}
 	//
-	var FunctionGenerationTemplate, errRead = ioutil.ReadFile("templates/"+o.TemplateFile)
+	var FunctionGenerationTemplate, errRead = ioutil.ReadFile("templates/" + o.TemplateFile)
 	check(errRead)
 
 	t := template.Must(template.New("template").Funcs(TemplateFUNctionMap).Parse(string(FunctionGenerationTemplate)))
@@ -205,7 +205,6 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	f, err := os.Create(fullFilePath)
 	check(err)
 
-
 	err = t.Execute(f, o)
 	if err != nil {
 		return errors.Wrapf(err, "Error executing template %s", t.Name())
@@ -214,8 +213,6 @@ func (o *UtilGenerateFunctionOptions) Run() error {
 	// 	return nil // We're done here
 	// }
 	// BASE command stuff continues on
-
-
 
 	log.Debug("BASES: %s", bases)
 	var pickedBase = ""
@@ -250,7 +247,7 @@ func FindBaseCommands(path string) ([]string, error) {
 	var splice = make([]string, 0) //create an empty array
 
 	e = filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-		if err == nil && libRegEx.MatchString(info.Name()) && !info.IsDir(){
+		if err == nil && libRegEx.MatchString(info.Name()) && !info.IsDir() {
 			splice = append(splice, path)
 		}
 		return nil
@@ -296,7 +293,6 @@ func addNewCmdToBaseFile(path string, functionName string) error {
 	return nil
 }
 
-
 func File2lines(filePath string) ([]string, error) {
 	f, err := os.Open(filePath)
 	if err != nil {
@@ -318,6 +314,7 @@ func LinesFromReader(r io.Reader) ([]string, error) {
 
 	return lines, nil
 }
+
 /**
  * Insert sting to n-th line of file.
  * If you want to insert a line, append newline '\n' to the end of the string.
@@ -343,7 +340,7 @@ func InsertStringToFile(path, str string, index int) error {
 func RemoveGoExtension(fileName string) string {
 	matched, _ := regexp.MatchString(`(.*\.go)`, fileName)
 	if matched {
-		return fileName[0:len(fileName)-len(".go")]
+		return fileName[0 : len(fileName)-len(".go")]
 	}
 	return fileName
 }
