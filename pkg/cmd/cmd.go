@@ -3,11 +3,12 @@ package cmd
 import (
 	"github.com/Benbentwo/bb/pkg/cmd/github"
 	initialize "github.com/Benbentwo/bb/pkg/cmd/init"
-	jenkins "github.com/Benbentwo/bb/pkg/cmd/jenkins"
+	"github.com/Benbentwo/bb/pkg/cmd/jenkins"
 	"github.com/Benbentwo/bb/pkg/cmd/setup"
 	"github.com/Benbentwo/bb/pkg/cmd/uninstall"
 	"github.com/Benbentwo/bb/pkg/cmd/util"
 	"github.com/Benbentwo/bb/pkg/log"
+	jenkinsv1 "github.com/jenkins-x/jx/pkg/apis/jenkins.io/v1"
 	"github.com/jenkins-x/jx/pkg/cmd/clients"
 	"github.com/jenkins-x/jx/pkg/cmd/opts"
 	"github.com/jenkins-x/jx/pkg/cmd/templates"
@@ -16,17 +17,22 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/AlecAivazis/survey.v1/terminal"
 	"io"
+	"io/ioutil"
+	"k8s.io/apimachinery/pkg/util/sets"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strconv"
+
 	"strings"
 )
 
-func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWriter, err io.Writer, args []string) *cobra.Command {
+func NewBBCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWriter, err io.Writer, args []string) *cobra.Command {
 	replacer := strings.NewReplacer("-", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	baseCommand := &cobra.Command{
 		Use:              "bb",
-		Short:            "BB CLI tool and utility",
+		Short:            "CLI tool and utility",
 		PersistentPreRun: setLoggingLevel,
 		Run:              runHelp,
 	}
@@ -90,7 +96,7 @@ func NewAVCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			Root:        baseCommand,
 			SeenPlugins: make(map[string]string, 0),
 		}
-		pluginCommandGroups, managedPluginsEnabled, err := commonOpts.GetPluginCommandGroups(verifier)
+		pluginCommandGroups, managedPluginsEnabled, err := GetPluginCommandGroups(verifier)
 		if err != nil {
 			log.Logger().Errorf("%v", err)
 		}
@@ -122,4 +128,68 @@ func setLoggingLevel(cmd *cobra.Command, args []string) {
 
 func runHelp(cmd *cobra.Command, args []string) {
 	cmd.Help()
+}
+
+// GetPluginCommandGroups returns the plugin groups
+func GetPluginCommandGroups(verifier extensions.PathVerifier) (templates.PluginCommandGroups, bool,
+	error) {
+
+	otherCommands := templates.PluginCommandGroup{
+		Message: "Other Commands",
+	}
+	groups := make(map[string]templates.PluginCommandGroup, 0)
+
+	pathCommands := templates.PluginCommandGroup{
+		Message: "Locally Available Commands:",
+	}
+
+	path := "PATH"
+	if runtime.GOOS == "windows" {
+		path = "path"
+	}
+
+	paths := sets.NewString(filepath.SplitList(os.Getenv(path))...)
+	for _, dir := range paths.List() {
+		files, err := ioutil.ReadDir(dir)
+		if err != nil {
+			continue
+		}
+
+		for _, f := range files {
+			if f.IsDir() {
+				continue
+			}
+			if !strings.HasPrefix(f.Name(), "jx-") {
+				continue
+			}
+
+			pluginPath := filepath.Join(dir, f.Name())
+			subCommand := strings.TrimPrefix(strings.Replace(filepath.Base(pluginPath), "-", " ", -1), "jx ")
+			pc := &templates.PluginCommand{
+				PluginSpec: jenkinsv1.PluginSpec{
+					SubCommand:  subCommand,
+					Description: pluginPath,
+				},
+				Errors: make([]error, 0),
+			}
+			pathCommands.Commands = append(pathCommands.Commands, pc)
+			if errs := verifier.Verify(filepath.Join(dir, f.Name())); len(errs) != 0 {
+				for _, err := range errs {
+					pc.Errors = append(pc.Errors, err)
+				}
+			}
+		}
+	}
+
+	pcgs := templates.PluginCommandGroups{}
+	for _, g := range groups {
+		pcgs = append(pcgs, g)
+	}
+	if len(otherCommands.Commands) > 0 {
+		pcgs = append(pcgs, otherCommands)
+	}
+	if len(pathCommands.Commands) > 0 {
+		pcgs = append(pcgs, pathCommands)
+	}
+	return pcgs, false, nil
 }
