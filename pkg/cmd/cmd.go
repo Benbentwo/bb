@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"github.com/Benbentwo/bb/pkg/cmd/github"
 	initialize "github.com/Benbentwo/bb/pkg/cmd/init"
 	"github.com/Benbentwo/bb/pkg/cmd/jenkins"
-	"github.com/Benbentwo/bb/pkg/cmd/setup"
 	"github.com/Benbentwo/bb/pkg/cmd/uninstall"
 	"github.com/Benbentwo/bb/pkg/cmd/util"
 	"github.com/Benbentwo/bb/pkg/log"
@@ -59,6 +57,12 @@ func NewBBCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			},
 		},
 		{
+			Message: "Jenkins Tools",
+			Commands: []*cobra.Command{
+				jenkins.NewCmdJenkins(commonOpts),
+			},
+		},
+		{
 			Message: "Uninstalling BB:",
 			Commands: []*cobra.Command{
 				uninstall.NewCmdUninstall(commonOpts),
@@ -68,24 +72,6 @@ func NewBBCommand(f clients.Factory, in terminal.FileReader, out terminal.FileWr
 			Message: "BB Utility Functions:",
 			Commands: []*cobra.Command{
 				util.NewCmdUtil(commonOpts),
-			},
-		},
-		{
-			Message: "setup",
-			Commands: []*cobra.Command{
-				setup.NewCmdSetup(commonOpts),
-			},
-		},
-		{
-			Message: "Jenkins Tools",
-			Commands: []*cobra.Command{
-				jenkins.NewCmdJenkins(commonOpts),
-			},
-		},
-		{
-			Message: "Github Tools",
-			Commands: []*cobra.Command{
-				github.NewCmdGh(commonOpts),
 			},
 		},
 	}
