@@ -52,3 +52,7 @@ jobs:
         with:
           name: linux-bb
           path: build/linux/bb
+
+      - name: Release
+        if: github.ref == 'refs/heads/master'
+

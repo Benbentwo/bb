@@ -24,7 +24,6 @@ MAIN_SRC_FILE=cmd/bb/bb.go
 GO := GO111MODULE=on go
 GO_NOMOD :=GO111MODULE=off go
 REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
-REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
 ORG := Benbentwo
 ORG_REPO := $(ORG)/$(NAME)
 RELEASE_ORG_REPO := $(ORG_REPO)
