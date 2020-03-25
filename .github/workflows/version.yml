@@ -16,6 +16,7 @@ jobs:
 #        if: github.ref == 'refs/heads/master'
 #        uses: srt32/git-actions@v0.0.3
         run: |
+          cd ${GITHUB_WORKSPACE}
           git for-each-ref refs/tags/ --count=1 --sort=-version:refname --format='%(refname:short)' > VERSION
           ./hack/shell-semver/increment_version.sh -p $(cat VERSION) > VERSION
       - name: Archive Version
