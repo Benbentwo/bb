@@ -26,7 +26,14 @@ jobs:
 
           git fetch --all --tags
           git for-each-ref refs/tags/ --count=1 --sort=-version:refname --format='%(refname:short)' > VERSION
-          ./hack/shell-semver/increment_version.sh -p $(cat VERSION) > VERSION
+          echo "in workspace $(pwd)"
+          echo "files found--"
+          ls -al
+          echo "---Tree"
+          ls -alR
+          script=$(find . -iname increment*)
+          echo $script
+          ${script} -p $(cat VERSION) > VERSION
 
       - name: Archive Version
         uses: actions/upload-artifact@v1
