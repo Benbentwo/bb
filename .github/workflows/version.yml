@@ -12,8 +12,10 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Version Getter
+      - name: Checkout
         uses: actions/checkout@v1
+
+      - name: Version Getter
 #        if: github.ref == 'refs/heads/master'
 #        uses: srt32/git-actions@v0.0.3
         working-directory: ${{ github.workspace }}
@@ -25,6 +27,7 @@ jobs:
           git fetch --all --tags
           git for-each-ref refs/tags/ --count=1 --sort=-version:refname --format='%(refname:short)' > VERSION
           ./hack/shell-semver/increment_version.sh -p $(cat VERSION) > VERSION
+
       - name: Archive Version
         uses: actions/upload-artifact@v1
         with:
