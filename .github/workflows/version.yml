@@ -1,4 +1,4 @@
-name: Go
+name: Version Test
 
 on:
 #  push:
@@ -13,10 +13,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Version Getter
+        uses: actions/checkout@v1
 #        if: github.ref == 'refs/heads/master'
 #        uses: srt32/git-actions@v0.0.3
+        working-directory: ${{ github.workspace }}
         run: |
-          cd ${GITHUB_WORKSPACE}
+          pwd
+          cd ${GITHUB_WORKSPACE} || echo "not found"
+          cd ${{ github.workspace }} || echo "github.worksapce not found"
+
+          git fetch --all --tags
           git for-each-ref refs/tags/ --count=1 --sort=-version:refname --format='%(refname:short)' > VERSION
           ./hack/shell-semver/increment_version.sh -p $(cat VERSION) > VERSION
       - name: Archive Version

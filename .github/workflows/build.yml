@@ -1,4 +1,4 @@
-name: Go
+name: Build Go Binary
 
 on:
   push:
@@ -53,6 +53,6 @@ jobs:
           name: linux-bb
           path: build/linux/bb
 
-      - name: Release
-        if: github.ref == 'refs/heads/master'
+#      - name: Release
+#        if: github.ref == 'refs/heads/master'
 
